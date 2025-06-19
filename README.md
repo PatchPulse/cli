@@ -1,7 +1,7 @@
 # Patch Pulse
 
-![GitHub Actions Continuous Deployment](https://github.com/barrymichaeldoyle/patch-pulse-cli/workflows/Continuous%20Deployment/badge.svg) ![GitHub Actions Rust](https://github.com/barrymichaeldoyle/patch-pulse-cli/workflows/Rust/badge.svg) ![License](https://img.shields.io/github/license/barrymichaeldoyle/patch-pulse-cli.svg) [![npm Version](https://img.shields.io/npm/v/patch-pulse.svg)](https://npmjs.com/package/patch-pulse) [![npm Downloads](https://img.shields.io/npm/dm/patch-pulse.svg)](https://npmjs.com/package/patch-pulse)
-![GitHub stars](https://img.shields.io/github/stars/barrymichaeldoyle/patch-pulse-cli.svg?style=social) ![GitHub forks](https://img.shields.io/github/forks/barrymichaeldoyle/patch-pulse-cli.svg?style=social)
+![License](https://img.shields.io/github/license/PatchPulse/cli.svg) [![npm Version](https://img.shields.io/npm/v/patch-pulse.svg)](https://npmjs.com/package/patch-pulse) [![npm Downloads](https://img.shields.io/npm/dm/patch-pulse.svg)](https://npmjs.com/package/patch-pulse)
+![GitHub stars](https://img.shields.io/github/stars/PatchPulse/cli.svg?style=social) ![GitHub forks](https://img.shields.io/github/forks/PatchPulse/cli.svg?style=social)
 
 ![Patch Pulse Banner](assets/banner.png)
 
@@ -22,15 +22,11 @@ Patch Pulse is a CLI tool that identifies out-of-date dependencies in your `pack
 
 ## How to Use
 
-To check your project's dependencies, navigate to your project directory and run:
+To check for version updates on your project's dependencies, navigate to your project's root directory and run:
 
 ```bash
-npx patch-pulse
+npx patch-pulse@latest
 ```
-
-## Built with Rust
-
-This package is built with Rust, offering high performance. The binaries are wrapped in npx, requiring no additional installation.
 
 ## Features
 
@@ -48,11 +44,11 @@ No installation required! Just ensure you have [Node.js](https://nodejs.org) ins
 
 ## License
 
-This project is licensed under GNU GPLv3 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under MIT - see the [LICENSE](LICENSE) file for details.
 
 ## Author
 
-This Patch Pulse CLI tool is maintained by [Barry Michael Doyle](https://barrymichaeldoyle.com).
+This Patch Pulse CLI tool is maintained by [@BarryMichaelDoyle]https://github.com/barrymichaeldoyle).
 
 ## Contributing
 
@@ -64,6 +60,9 @@ If you'd like to use the Patch Pulse Slack Bot to track when `npm` packages are 
 
 https://slack.com/oauth/v2/authorize?client_id=180374136631.6017466448468&scope=chat:write,commands,incoming-webhook
 
-## Support Me
-
-If you like this tool, please consider [supporting me](https://www.buymeacoffee.com/barrycg) to keep the project alive and well-maintained.
+"@types/node": "24.0.3",
+"@typescript-eslint/eslint-plugin": "7.0.0",
+"@typescript-eslint/parser": "7.0.0",
+"chalk": "5.4.1",
+"eslint": "8.57.0",
+"typescript": "5.8.3"

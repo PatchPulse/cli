@@ -1,0 +1,29 @@
+{
+  "name": "patch-pulse",
+  "version": "2.0.0",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Barry Michael Doyle",
+    "email": "barry@barrymichaeldoyle.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PatchPulse/cli.git"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "dev": "npm run build && node lib/index.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "chalk": "5.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.3",
+    "prettier": "3.5.3",
+    "typescript": "5.8.3"
+  }
+}
