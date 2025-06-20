@@ -59,10 +59,3 @@ Contributions are welcome! Please open an issue or submit a pull request.
 If you'd like to use the Patch Pulse Slack Bot to track when `npm` packages are updated, you can add it to your workspace using the following link:
 
 https://slack.com/oauth/v2/authorize?client_id=180374136631.6017466448468&scope=chat:write,commands,incoming-webhook
-
-"@types/node": "24.0.3",
-"@typescript-eslint/eslint-plugin": "7.0.0",
-"@typescript-eslint/parser": "7.0.0",
-"chalk": "5.4.1",
-"eslint": "8.57.0",
-"typescript": "5.8.3"
