@@ -1,4 +1,4 @@
-# Patch Pulse
+# Patch Pulse CLI
 
 ![License](https://img.shields.io/github/license/PatchPulse/cli.svg) [![npm Version](https://img.shields.io/npm/v/patch-pulse.svg)](https://npmjs.com/package/patch-pulse) [![npm Downloads](https://img.shields.io/npm/dm/patch-pulse.svg)](https://npmjs.com/package/patch-pulse)
 ![GitHub stars](https://img.shields.io/github/stars/PatchPulse/cli.svg?style=social) ![GitHub forks](https://img.shields.io/github/forks/PatchPulse/cli.svg?style=social)
