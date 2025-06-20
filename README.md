@@ -1,11 +1,11 @@
 # Patch Pulse CLI
 
+Patch Pulse is a CLI tool that identifies out-of-date dependencies in your `package.json` file, ensuring your project stays up-to-date with the latest versions available on npm.
+
 ![License](https://img.shields.io/github/license/PatchPulse/cli.svg) [![npm Version](https://img.shields.io/npm/v/patch-pulse.svg)](https://npmjs.com/package/patch-pulse) [![npm Downloads](https://img.shields.io/npm/dm/patch-pulse.svg)](https://npmjs.com/package/patch-pulse)
 ![GitHub stars](https://img.shields.io/github/stars/PatchPulse/cli.svg?style=social) ![GitHub forks](https://img.shields.io/github/forks/PatchPulse/cli.svg?style=social)
 
 ![Patch Pulse Banner](assets/banner.png)
-
-Patch Pulse is a CLI tool that identifies out-of-date dependencies in your `package.json` file, ensuring your project stays up-to-date with the latest versions available on npm.
 
 ## Table of Contents
 
@@ -48,7 +48,7 @@ This project is licensed under MIT - see the [LICENSE](LICENSE) file for details
 
 ## Author
 
-This Patch Pulse CLI tool is maintained by [@BarryMichaelDoyle]https://github.com/barrymichaeldoyle).
+This Patch Pulse CLI tool is maintained by [@BarryMichaelDoyle](https://github.com/barrymichaeldoyle).
 
 ## Contributing
 

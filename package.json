@@ -1,6 +1,6 @@
 {
   "name": "patch-pulse",
-  "version": "2.0.1",
+  "version": "2.2.3",
   "type": "module",
   "main": "lib/index.js",
   "bin": {
@@ -31,10 +31,11 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "tsc",
-    "dev": "npm run build && node lib/index.js",
+    "build": "node scripts/generate-version.cjs && tsc && tsc-esm-fix",
+    "dev": "tsx src/index.ts",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "deploy": "npm run build && npm publish"
   },
   "dependencies": {
     "chalk": "5.4.1"
@@ -42,6 +43,8 @@
   "devDependencies": {
     "@types/node": "24.0.3",
     "prettier": "3.5.3",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "tsx": "4.20.3",
+    "tsc-esm-fix": "3.1.2"
   }
 }
