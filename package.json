@@ -1,6 +1,6 @@
 {
   "name": "patch-pulse",
-  "version": "2.2.3",
+  "version": "2.3.0",
   "type": "module",
   "main": "lib/index.js",
   "bin": {
@@ -33,6 +33,9 @@
     "typecheck": "tsc --noEmit",
     "build": "node scripts/generate-version.cjs && tsc && tsc-esm-fix",
     "dev": "tsx src/index.ts",
+    "test:build": "npm run build && node lib/index.js",
+    "test:version": "npm run build && node lib/index.js --version",
+    "test:help": "npm run build && node lib/index.js --help",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "deploy": "npm run build && npm publish"
