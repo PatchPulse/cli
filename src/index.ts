@@ -23,57 +23,30 @@ async function main(): Promise<void> {
     const packageJson = await readPackageJson(packageJsonPath);
     const allDependencies: DependencyInfo[] = [];
 
+    // Define dependency types to check
+    const dependencyTypes = [
+      { key: 'dependencies', label: 'Dependencies' },
+      { key: 'devDependencies', label: 'Dev Dependencies' },
+      { key: 'peerDependencies', label: 'Peer Dependencies' },
+      { key: 'optionalDependencies', label: 'Optional Dependencies' },
+    ];
+
     // Check each dependency type with individual error handling
-    try {
-      const dependencies = await checkDependencyVersions(
-        packageJson.dependencies,
-        'Dependencies'
-      );
-      allDependencies.push(...dependencies);
-    } catch (error) {
-      console.error(chalk.red(`Error checking dependencies: ${error}`));
-    }
-
-    try {
-      const devDependencies = await checkDependencyVersions(
-        packageJson.devDependencies,
-        'Dev Dependencies'
-      );
-      allDependencies.push(...devDependencies);
-    } catch (error) {
-      console.error(chalk.red(`Error checking dev dependencies: ${error}`));
-    }
-
-    try {
-      const peerDependencies = await checkDependencyVersions(
-        packageJson.peerDependencies,
-        'Peer Dependencies'
-      );
-      allDependencies.push(...peerDependencies);
-    } catch (error) {
-      console.error(chalk.red(`Error checking peer dependencies: ${error}`));
-    }
-
-    try {
-      const optionalDependencies = await checkDependencyVersions(
-        packageJson.optionalDependencies,
-        'Optional Dependencies'
-      );
-      allDependencies.push(...optionalDependencies);
-    } catch (error) {
-      console.error(
-        chalk.red(`Error checking optional dependencies: ${error}`)
-      );
-    }
-
-    try {
-      const bundledDependencies = await checkDependencyVersions(
-        packageJson.bundledDependencies,
-        'Bundled Dependencies'
-      );
-      allDependencies.push(...bundledDependencies);
-    } catch (error) {
-      console.error(chalk.red(`Error checking bundled dependencies: ${error}`));
+    for (const { key, label } of dependencyTypes) {
+      try {
+        const dependencies = await checkDependencyVersions(
+          packageJson[key as keyof typeof packageJson] as Record<
+            string,
+            string
+          >,
+          label
+        );
+        allDependencies.push(...dependencies);
+      } catch (error) {
+        console.error(
+          chalk.red(`Error checking ${key.toLowerCase()}: ${error}`)
+        );
+      }
     }
 
     if (allDependencies.length > 0) {

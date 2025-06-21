@@ -28,13 +28,12 @@ ${chalk.cyan.bold.underline('⚙️  Options:')}
   ${chalk.white('-v, --version')}            ${chalk.gray('Show version information')}
 
 ${chalk.cyan.bold.underline('📝 Description:')}
-  Reads the package.json file in the current directory and displays
+  Reads the \`package.json\` file in the current directory and displays
   information about your project's dependencies, including version
   status and update availability.
 
 ${chalk.cyan.bold.underline('💡 Examples:')}
   ${chalk.white('patch-pulse')}          ${chalk.gray('# Check dependencies in current directory')}
-  ${chalk.white('patch-pulse --info')}   ${chalk.gray('# Show this info message')}
   ${chalk.white('patch-pulse -v')}       ${chalk.gray('# Show version information')}
 
 ${chalk.cyan.bold.underline('🔗 Links:')}
