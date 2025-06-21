@@ -9,16 +9,16 @@ Patch Pulse is a CLI tool that identifies out-of-date dependencies in your `pack
 
 ## Table of Contents
 
-- [How to Use](#how-to-use)
-- [Built with Rust](#built-with-rust)
-- [Features](#features)
-- [Installation](#installation)
-- [Example](#example)
-- [License](#license)
-- [Author](#author)
-- [Contributing](#contributing)
-- [Slack Bot](#slack-bot)
-- [Support Me](#support-me)
+- [Patch Pulse CLI](#patch-pulse-cli)
+  - [Table of Contents](#table-of-contents)
+  - [How to Use](#how-to-use)
+  - [Features](#features)
+  - [Installation](#installation)
+  - [Example](#example)
+  - [License](#license)
+  - [Author](#author)
+  - [Contributing](#contributing)
+  - [Slack Bot](#slack-bot)
 
 ## How to Use
 
@@ -40,7 +40,7 @@ No installation required! Just ensure you have [Node.js](https://nodejs.org) ins
 
 ## Example
 
-![Example Screenshot](assets/example.png)
+![Example Screenshot](assets/example-v2.png)
 
 ## License
 
@@ -58,4 +58,4 @@ Contributions are welcome! Please open an issue or submit a pull request.
 
 If you'd like to use the Patch Pulse Slack Bot to track when `npm` packages are updated, you can add it to your workspace using the following link:
 
-https://slack.com/oauth/v2/authorize?client_id=180374136631.6017466448468&scope=chat:write,commands,incoming-webhook
+<https://slack.com/oauth/v2/authorize?client_id=180374136631.6017466448468&scope=chat:write,commands,incoming-webhook>
