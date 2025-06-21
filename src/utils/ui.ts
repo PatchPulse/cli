@@ -1,8 +1,20 @@
 import chalk from 'chalk';
+import { readFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
 import { VERSION } from '../gen/version.gen';
 import { DependencyInfo } from '../types';
 
-// Helper function to create centered bordered boxes
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+/**
+ * Creates a centered bordered box with a title
+ * @param title - The title to display in the box
+ * @param width - The width of the box
+ * @returns The centered bordered box with the title
+ */
 export function createCenteredBox(title: string, width: number): string {
   const titleLength = title.length;
   const leftPadding = Math.floor((width - titleLength) / 2);
@@ -13,19 +25,33 @@ ${chalk.cyan.bold('║')}${' '.repeat(leftPadding)}${chalk.white.bold(title)}${'
 ${chalk.cyan.bold('╚' + '═'.repeat(width) + '╝')}`;
 }
 
+/**
+ * Displays the "Made with love" message
+ */
+export function displayMadeWithLove(): void {
+  console.log(chalk.gray('─'.repeat(40)));
+  console.log(
+    `${chalk.gray('Made with ❤️  by ')}${chalk.underline('Barry Michael Doyle')}`
+  );
+}
+
+/**
+ * Displays the help message
+ */
 export function displayHelp(): void {
   const boxWidth = 40;
 
   console.log(`${createCenteredBox('Patch Pulse CLI', boxWidth)}
 
-${chalk.yellow.bold('🔍 A CLI tool for checking npm package dependency versions')}
+${chalk.white.bold('🔍 A CLI tool for checking npm package dependency versions')}
 
 ${chalk.cyan.bold.underline('📖 Usage:')}
-  ${chalk.white('patch-pulse')} ${chalk.gray('[options]')}
+  ${chalk.white('npx patch-pulse')} ${chalk.gray('[options]')}
 
 ${chalk.cyan.bold.underline('⚙️  Options:')}
-  ${chalk.white('-i, -h, --info, --help')}   ${chalk.gray('Show this info message')}
+  ${chalk.white('-i, -h, --info, --help')}   ${chalk.gray('Show current message')}
   ${chalk.white('-v, --version')}            ${chalk.gray('Show version information')}
+  ${chalk.white('-l, --license')}            ${chalk.gray('Show license information')}
 
 ${chalk.cyan.bold.underline('📝 Description:')}
   Reads the \`package.json\` file in the current directory and displays
@@ -33,8 +59,9 @@ ${chalk.cyan.bold.underline('📝 Description:')}
   status and update availability.
 
 ${chalk.cyan.bold.underline('💡 Examples:')}
-  ${chalk.white('patch-pulse')}          ${chalk.gray('# Check dependencies in current directory')}
-  ${chalk.white('patch-pulse -v')}       ${chalk.gray('# Show version information')}
+  ${chalk.white('npx patch-pulse')}          ${chalk.gray('# Check dependencies in current directory')}
+  ${chalk.white('npx patch-pulse -v')}       ${chalk.gray('# Show version information')}
+  ${chalk.white('npx patch-pulse -l')}       ${chalk.gray('# Show license information')}
 
 ${chalk.cyan.bold.underline('🔗 Links:')}
   ${chalk.blue('📚 Docs:')}      ${chalk.white.underline('https://github.com/PatchPulse/cli')}
@@ -42,21 +69,47 @@ ${chalk.cyan.bold.underline('🔗 Links:')}
   ${chalk.blue('👨‍ Author:')}    ${chalk.white.underline('https://github.com/barrymichaeldoyle')}
   ${chalk.blue('🤖 Slack Bot:')} ${chalk.white.underline('https://slack.com/oauth/v2/authorize?client_id=180374136631.6017466448468&scope=chat:write,commands,incoming-webhook')}`);
 
-  console.log();
-  console.log(chalk.gray('─'.repeat(40)));
-  console.log(
-    `${chalk.gray('Made with ❤️  by ')}${chalk.underline('Barry Michael Doyle')}`
-  );
+  displayMadeWithLove();
 }
 
+/**
+ * Displays the version information
+ */
 export function displayVersion(): void {
   console.log(`${createCenteredBox('Patch Pulse CLI', 40)}
 
-${chalk.white.bold('Version:')} ${chalk.cyan(VERSION)}
-${chalk.white.bold('Author:')}  ${chalk.cyan('Barry Michael Doyle ')}${chalk.underline('<https://github.com/barrymichaeldoyle>')}
-${chalk.white.bold('License:')} ${chalk.cyan('MIT')}`);
+${chalk.cyan.bold('Version:')} ${chalk.white(VERSION)}
+${chalk.cyan.bold('Author:')}  ${chalk.underline('<https://github.com/barrymichaeldoyle>')}
+${chalk.cyan.bold('Repo:')}    ${chalk.white('https://github.com/PatchPulse/cli')}
+${chalk.cyan.bold('License:')} ${chalk.white('MIT')}`);
+
+  displayMadeWithLove();
 }
 
+/**
+ * Displays the license information
+ */
+export function displayLicense(): void {
+  try {
+    const licenseContent = readFileSync(
+      join(__dirname, '..', '..', 'LICENSE'),
+      'utf-8'
+    );
+    console.log(`${createCenteredBox('License', 60)}
+
+${chalk.white(licenseContent)}`);
+  } catch (error) {
+    console.error(chalk.red('Error reading LICENSE file:'), error);
+    console.log(chalk.yellow('License: MIT'));
+    process.exit(1);
+  }
+}
+
+/**
+ * Displays a message when an update is available
+ * @param currentVersion - The current version of the package
+ * @param latestVersion - The latest version of the package
+ */
 export function displayUpdateAvailable(
   currentVersion: string,
   latestVersion: string
@@ -73,7 +126,7 @@ export function displayUpdateAvailable(
   );
 
   console.log(chalk.gray('\nTo update, run:'));
-  console.log(chalk.cyan.bold('  npm install -g patch-pulse@latest'));
+  console.log(chalk.cyan.bold('  npx patch-pulse@latest'));
 
   console.log(chalk.gray('═'.repeat(50)));
 }

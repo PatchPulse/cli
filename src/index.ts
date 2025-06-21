@@ -8,6 +8,7 @@ import { readPackageJson } from './services/package';
 import { DependencyInfo } from './types';
 import {
   displayHelp,
+  displayLicense,
   displaySummary,
   displayThankYouMessage,
   displayVersion,
@@ -71,7 +72,15 @@ async function main(): Promise<void> {
 const args = process.argv.slice(2);
 
 // Check for unknown commands first
-const validFlags = ['--help', '-h', '--info', '-i', '--version', '-v'];
+const validFlags = [
+  '--help',
+  '-h',
+  '--info',
+  '-i',
+  '--version',
+  '-v',
+  '--license',
+];
 const unknownArgs = args.filter(arg => !validFlags.includes(arg));
 
 if (unknownArgs.length > 0) {
@@ -80,20 +89,24 @@ if (unknownArgs.length > 0) {
       ` ${chalk.white(unknownArgs.join(' '))}`
   );
   console.log();
-  console.log(chalk.yellow.bold(' Available commands:'));
+  console.log(chalk.blue.bold(' Available commands:'));
   console.log(
-    chalk.white('  patch-pulse') + chalk.gray('           # Check dependencies')
+    chalk.white('  npx patch-pulse') +
+      chalk.gray('           # Check dependencies')
   );
   console.log(
-    chalk.white('  patch-pulse --help') + chalk.gray('    # Show help')
+    chalk.white('  npx patch-pulse --help') + chalk.gray('    # Show help')
   );
   console.log(
-    chalk.white('  patch-pulse --version') + chalk.gray(' # Show version')
+    chalk.white('  npx patch-pulse --version') + chalk.gray(' # Show version')
+  );
+  console.log(
+    chalk.white('  npx patch-pulse --license') + chalk.gray(' # Show license')
   );
   console.log();
   console.log(
     chalk.cyan.bold('For more information:') +
-      ` ${chalk.white.bold('patch-pulse --help')}`
+      ` ${chalk.white.bold('npx patch-pulse --help')}`
   );
   process.exit(1);
 }
@@ -110,6 +123,11 @@ if (
 
 if (args.includes('--version') || args.includes('-v')) {
   displayVersion();
+  process.exit(0);
+}
+
+if (args.includes('--license') || args.includes('-l')) {
+  displayLicense();
   process.exit(0);
 }
 
