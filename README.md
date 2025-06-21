@@ -40,7 +40,7 @@ No installation required! Just ensure you have [Node.js](https://nodejs.org) ins
 
 ## Example
 
-![Example Screenshot](assets/example-v2.png)
+![Example Screenshot](assets/example.png)
 
 ## License
 
