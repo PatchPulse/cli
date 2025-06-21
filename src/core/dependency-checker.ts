@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+
 import { getLatestVersion } from '../services/npm';
 import { DependencyInfo } from '../types';
 import { ProgressSpinner } from '../utils/progress';
@@ -16,14 +17,12 @@ export async function checkDependencyVersions(
   console.log(chalk.cyan('─'.repeat(category.length + 1)));
 
   const packageNames = Object.keys(dependencies);
-
-  // Use the ProgressSpinner class
   const progress = new ProgressSpinner();
   progress.start(`Checking ${packageNames.length} packages...`);
 
-  // Process all packages in parallel with concurrency limit
   const concurrencyLimit = 10;
   const dependencyInfos: DependencyInfo[] = [];
+  let completedCount = 0;
 
   for (let i = 0; i < packageNames.length; i += concurrencyLimit) {
     const batch = packageNames.slice(i, i + concurrencyLimit);
@@ -38,6 +37,12 @@ export async function checkDependencyVersions(
           ? getUpdateType(version, latestVersion)
           : undefined;
 
+      // Update progress for each completed package
+      completedCount++;
+      progress.updateMessage(
+        `Checking ${packageNames.length} packages... (${completedCount}/${packageNames.length})`
+      );
+
       return {
         name,
         currentVersion: version,
@@ -49,19 +54,9 @@ export async function checkDependencyVersions(
 
     const batchResults = await Promise.all(batchPromises);
     dependencyInfos.push(...batchResults);
-
-    // Update progress message with current count
-    const processedCount = Math.min(i + concurrencyLimit, packageNames.length);
-    progress.updateMessage(
-      `Checking ${packageNames.length} packages... (${processedCount}/${packageNames.length})`
-    );
   }
 
-  // Stop progress indicator
   progress.stop();
-
-  // Sort and display results
-  dependencyInfos.sort((a, b) => a.name.localeCompare(b.name));
   displayResults(dependencyInfos);
   console.log();
 
@@ -77,18 +72,15 @@ function displayResults(dependencyInfos: DependencyInfo[]): void {
       status = chalk.gray('UNKNOWN');
       versionInfo = dep.currentVersion;
     } else if (dep.isOutdated) {
-      const updateTypeColor =
-        dep.updateType === 'major'
-          ? chalk.red
-          : dep.updateType === 'minor'
-            ? chalk.yellow
-            : chalk.green;
-      status = updateTypeColor(
-        `⚠️  ${dep.updateType?.toUpperCase() || 'OUTDATED'}`
-      );
-      versionInfo = `${dep.currentVersion} → ${chalk.yellow(dep.latestVersion)}`;
+      const updateTypeColor = {
+        major: chalk.yellow,
+        minor: chalk.magenta,
+        patch: chalk.blue,
+      }[dep.updateType || 'patch'];
+      status = updateTypeColor(`${dep.updateType?.toUpperCase() || 'UPDATE'}`);
+      versionInfo = `${dep.currentVersion} → ${chalk.cyan(dep.latestVersion)}`;
     } else {
-      status = chalk.green('✓ UP TO DATE');
+      status = chalk.green('UP TO DATE');
       versionInfo = dep.currentVersion;
     }
 

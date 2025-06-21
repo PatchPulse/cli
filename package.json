@@ -46,8 +46,8 @@
   "devDependencies": {
     "@types/node": "24.0.3",
     "prettier": "3.5.3",
-    "typescript": "5.8.3",
     "tsx": "4.20.3",
-    "tsc-esm-fix": "3.1.2"
+    "tsc-esm-fix": "3.1.2",
+    "typescript": "5.8.3"
   }
 }

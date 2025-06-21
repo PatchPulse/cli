@@ -23,29 +23,28 @@ async function main(): Promise<void> {
     const packageJson = await readPackageJson(packageJsonPath);
     const allDependencies: DependencyInfo[] = [];
 
-    // Define dependency types to check
-    const dependencyTypes = [
-      { key: 'dependencies', label: 'Dependencies' },
-      { key: 'devDependencies', label: 'Dev Dependencies' },
-      { key: 'peerDependencies', label: 'Peer Dependencies' },
-      { key: 'optionalDependencies', label: 'Optional Dependencies' },
-    ];
+    // Define dependency types to check with their labels
+    const dependencyTypeLabels: Record<string, string> = {
+      dependencies: 'Dependencies',
+      devDependencies: 'Dev Dependencies',
+      peerDependencies: 'Peer Dependencies',
+      optionalDependencies: 'Optional Dependencies',
+    };
 
-    // Check each dependency type with individual error handling
-    for (const { key, label } of dependencyTypes) {
-      try {
-        const dependencies = await checkDependencyVersions(
-          packageJson[key as keyof typeof packageJson] as Record<
-            string,
-            string
-          >,
-          label
-        );
-        allDependencies.push(...dependencies);
-      } catch (error) {
-        console.error(
-          chalk.red(`Error checking ${key.toLowerCase()}: ${error}`)
-        );
+    // Check each dependency type in the order they appear in package.json
+    for (const [key, value] of Object.entries(packageJson)) {
+      if (dependencyTypeLabels[key] && value && typeof value === 'object') {
+        try {
+          const dependencies = await checkDependencyVersions(
+            value as Record<string, string>,
+            dependencyTypeLabels[key]
+          );
+          allDependencies.push(...dependencies);
+        } catch (error) {
+          console.error(
+            chalk.red(`Error checking ${key.toLowerCase()}: ${error}`)
+          );
+        }
       }
     }
 
