@@ -36,18 +36,29 @@
     "test:build": "npm run build && node lib/index.js",
     "test:version": "npm run build && node lib/index.js --version",
     "test:help": "npm run build && node lib/index.js --help",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "prettier --write . --ignore-path .gitignore",
+    "format:check": "prettier --check . --ignore-path .gitignore",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "lint:format": "npm run lint && npm run format",
+    "lint:format:fix": "npm run lint:fix && npm run format",
     "deploy": "npm run build && npm publish"
   },
   "dependencies": {
-    "chalk": "5.4.0"
+    "chalk": "5.4.1"
   },
   "devDependencies": {
+    "@eslint/js": "9.29.0",
     "@types/node": "24.0.3",
+    "@typescript-eslint/eslint-plugin": "8.34.1",
+    "@typescript-eslint/parser": "8.34.1",
+    "eslint": "9.29.0",
+    "eslint-config-prettier": "10.1.5",
+    "eslint-plugin-prettier": "5.5.0",
+    "jiti": "2.4.2",
     "prettier": "3.5.3",
-    "tsx": "4.20.3",
     "tsc-esm-fix": "3.1.2",
+    "tsx": "4.20.3",
     "typescript": "5.8.3"
   }
 }

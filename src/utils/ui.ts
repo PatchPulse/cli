@@ -168,9 +168,15 @@ export function displaySummary(allDependencies: DependencyInfo[]): void {
   // Only show breakdown if there are outdated packages
   if (outdated > 0) {
     const breakdown = [];
-    if (majorUpdates > 0) breakdown.push(`${majorUpdates} major`);
-    if (minorUpdates > 0) breakdown.push(`${minorUpdates} minor`);
-    if (patchUpdates > 0) breakdown.push(`${patchUpdates} patch`);
+    if (majorUpdates > 0) {
+      breakdown.push(`${majorUpdates} major`);
+    }
+    if (minorUpdates > 0) {
+      breakdown.push(`${minorUpdates} minor`);
+    }
+    if (patchUpdates > 0) {
+      breakdown.push(`${patchUpdates} patch`);
+    }
 
     const breakdownText =
       breakdown.length > 0 ? ` ${chalk.gray(`(${breakdown.join(', ')})`)}` : '';

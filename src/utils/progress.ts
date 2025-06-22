@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
 export class ProgressSpinner {
-  private interval: NodeJS.Timeout | null = null;
+  private interval: ReturnType<typeof setInterval> | null = null;
   private currentIndex = 0;
   private readonly spinners = [
     '⠋',

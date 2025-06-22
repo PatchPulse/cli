@@ -18,7 +18,7 @@ export interface NpmPackageInfo {
   'dist-tags': {
     latest: string;
   };
-  versions: Record<string, any>;
+  versions: Record<string, object>;
 }
 
 export interface VersionInfo {

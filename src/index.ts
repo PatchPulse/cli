@@ -56,7 +56,7 @@ async function main(): Promise<void> {
 
     try {
       await checkForCliUpdate();
-    } catch (error) {
+    } catch {
       // Silently fail for CLI updates, i.e. don't let CLI update errors stop the main flow
     }
   } catch (error) {

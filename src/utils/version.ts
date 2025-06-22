@@ -26,9 +26,15 @@ export function getUpdateType(
     const currentVersion = parseVersion(current);
     const latestVersion = parseVersion(latest);
 
-    if (latestVersion.major > currentVersion.major) return 'major';
-    if (latestVersion.minor > currentVersion.minor) return 'minor';
-    if (latestVersion.patch > currentVersion.patch) return 'patch';
+    if (latestVersion.major > currentVersion.major) {
+      return 'major';
+    }
+    if (latestVersion.minor > currentVersion.minor) {
+      return 'minor';
+    }
+    if (latestVersion.patch > currentVersion.patch) {
+      return 'patch';
+    }
     return 'patch';
   } catch (error) {
     // Handle invalid version formats gracefully
