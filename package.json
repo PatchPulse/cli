@@ -31,7 +31,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "node scripts/generate-version.cjs && tsc && tsc-esm-fix",
+    "build": "node scripts/generate-version.cjs && tsc && node scripts/fix-imports.cjs",
     "dev": "tsx src/index.ts",
     "test:build": "npm run build && node lib/index.js",
     "test:version": "npm run build && node lib/index.js --version",
@@ -63,7 +63,6 @@
     "eslint-plugin-prettier": "5.5.0",
     "jiti": "2.4.2",
     "prettier": "3.5.3",
-    "tsc-esm-fix": "3.1.2",
     "tsx": "4.20.3",
     "typescript": "5.8.3",
     "vitest": "3.2.4"
