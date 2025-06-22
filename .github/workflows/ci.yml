@@ -104,38 +104,39 @@ jobs:
 
       - name: Generate coverage badge
         run: |
-          # Extract coverage percentage from lcov.info
+          # Calculate coverage for only tested files (files with at least one covered line)
           if [ -f coverage/lcov.info ]; then
-            total_lines=$(grep -h "^DA:" coverage/lcov.info | wc -l)
-            covered_lines=$(grep -h "^DA:" coverage/lcov.info | grep ",1$" | wc -l)
-            if [ "$total_lines" -gt 0 ]; then
-              PERCENTAGE=$(( 100 * covered_lines / total_lines ))
-            else
-              PERCENTAGE=0
-            fi
+            total_lines=0
+            covered_lines=0
+            # For each file section in lcov.info
+            awk '/^SF:/{if (file) {if (file_total>0 && file_covered>0) {total+=file_total; covered+=file_covered}}; file=1; file_total=0; file_covered=0} /^DA:/{file_total++; if ($0 ~ /,1$/) file_covered++} END{if (file && file_total>0 && file_covered>0) {total+=file_total; covered+=file_covered}; print total, covered}' coverage/lcov.info | {
+              read total covered
+              if [ "$total" -gt 0 ]; then
+                PERCENTAGE=$(( 100 * covered / total ))
+              else
+                PERCENTAGE=0
+              fi
+              # Determine color based on coverage
+              if [ $PERCENTAGE -ge 80 ]; then
+                COLOR=green
+              elif [ $PERCENTAGE -ge 60 ]; then
+                COLOR=yellow
+              else
+                COLOR=red
+              fi
+              # Create badge URL
+              BADGE_URL="https://img.shields.io/badge/coverage-${PERCENTAGE}%25-${COLOR}"
+              # Update README with new badge
+              if [ -f README.md ]; then
+                sed -i "s|https://img.shields.io/badge/coverage-[0-9]*%25-[a-z]*|${BADGE_URL}|g" README.md
+                echo "Updated coverage badge to ${PERCENTAGE}% (tested files only)"
+              else
+                echo "Warning: README.md not found"
+              fi
+            }
           else
             echo "Warning: coverage/lcov.info not found"
             PERCENTAGE=0
-          fi
-
-          # Determine color based on coverage
-          if [ $PERCENTAGE -ge 80 ]; then
-            COLOR=green
-          elif [ $PERCENTAGE -ge 60 ]; then
-            COLOR=yellow
-          else
-            COLOR=red
-          fi
-
-          # Create badge URL
-          BADGE_URL="https://img.shields.io/badge/coverage-${PERCENTAGE}%25-${COLOR}"
-
-          # Update README with new badge
-          if [ -f README.md ]; then
-            sed -i "s|https://img.shields.io/badge/coverage-[0-9]*%25-[a-z]*|${BADGE_URL}|g" README.md
-            echo "Updated coverage badge to ${PERCENTAGE}%"
-          else
-            echo "Warning: README.md not found"
           fi
 
       - name: Commit and push changes
