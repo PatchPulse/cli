@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createCenteredBox, displayMadeWithLove, displayVersion } from '../ui';
+import { displayVersion } from '../cli';
+import { createCenteredBox, displayMadeWithLove } from '../display';
 
 const mockConsoleLog = vi.fn();
 
-describe('UI Functions', () => {
+describe('Display Functions', () => {
   beforeEach(() => {
     vi.spyOn(console, 'log').mockImplementation(mockConsoleLog);
   });
@@ -53,13 +54,10 @@ describe('UI Functions', () => {
     it('should display version information with all required fields', () => {
       displayVersion();
 
-      // Should call console.log multiple times (once for the main output, once for made with love)
       expect(mockConsoleLog).toHaveBeenCalled();
 
-      // Get the first call (main version output)
       const firstCall = mockConsoleLog.mock.calls[0][0];
 
-      // Check that it contains the expected content
       expect(firstCall).toContain('Patch Pulse CLI');
       expect(firstCall).toContain('Version:');
       expect(firstCall).toContain('Author:');
@@ -69,7 +67,6 @@ describe('UI Functions', () => {
       expect(firstCall).toContain('https://github.com/barrymichaeldoyle');
       expect(firstCall).toContain('https://github.com/PatchPulse/cli');
 
-      // Should also call displayMadeWithLove (which calls console.log twice)
       expect(mockConsoleLog).toHaveBeenCalledTimes(3);
     });
 
@@ -78,8 +75,6 @@ describe('UI Functions', () => {
 
       const firstCall = mockConsoleLog.mock.calls[0][0];
 
-      // The VERSION should be displayed in the output
-      // We can't check the exact version since it's generated, but we can check the structure
       expect(firstCall).toMatch(/Version:\s*\d+\.\d+\.\d+/);
     });
   });

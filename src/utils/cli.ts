@@ -4,40 +4,11 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 import { VERSION } from '../gen/version.gen';
-import { DependencyInfo } from '../types';
+import { createCenteredBox, displayMadeWithLove } from './display';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-/**
- * Creates a centered bordered box with a title
- * @param title - The title to display in the box
- * @param width - The width of the box
- * @returns The centered bordered box with the title
- */
-export function createCenteredBox(title: string, width: number): string {
-  const titleLength = title.length;
-  const leftPadding = Math.floor((width - titleLength) / 2);
-  const rightPadding = width - titleLength - leftPadding;
-
-  return `${chalk.cyan.bold('╔' + '═'.repeat(width) + '╗')}
-${chalk.cyan.bold('║')}${' '.repeat(leftPadding)}${chalk.white.bold(title)}${' '.repeat(rightPadding)}${chalk.cyan.bold('║')}
-${chalk.cyan.bold('╚' + '═'.repeat(width) + '╝')}`;
-}
-
-/**
- * Displays the "Made with love" message
- */
-export function displayMadeWithLove(): void {
-  console.log(chalk.gray('─'.repeat(40)));
-  console.log(
-    `${chalk.gray('Made with ❤️  by ')}${chalk.underline('Barry Michael Doyle')}`
-  );
-}
-
-/**
- * Displays the help message
- */
 export function displayHelp(): void {
   const boxWidth = 40;
 
@@ -72,9 +43,6 @@ ${chalk.cyan.bold.underline('🔗 Links:')}
   displayMadeWithLove();
 }
 
-/**
- * Displays the version information
- */
 export function displayVersion(): void {
   console.log(`${createCenteredBox('Patch Pulse CLI', 40)}
 
@@ -86,9 +54,6 @@ ${chalk.cyan.bold('License:')} ${chalk.white('MIT')}`);
   displayMadeWithLove();
 }
 
-/**
- * Displays the license information
- */
 export function displayLicense(): void {
   try {
     const licenseContent = readFileSync(
@@ -105,11 +70,6 @@ ${chalk.white(licenseContent)}`);
   }
 }
 
-/**
- * Displays a message when an update is available
- * @param currentVersion - The current version of the package
- * @param latestVersion - The latest version of the package
- */
 export function displayUpdateAvailable(
   currentVersion: string,
   latestVersion: string
@@ -141,57 +101,3 @@ export function displayThankYouMessage(): void {
       ` ${chalk.white.bold('npx patch-pulse --help')}`
   );
 }
-
-export function displaySummary(allDependencies: DependencyInfo[]): void {
-  const total = allDependencies.length;
-  const upToDate = allDependencies.filter(d => !d.isOutdated).length;
-  const outdated = allDependencies.filter(d => d.isOutdated).length;
-  const unknown = allDependencies.filter(d => !d.latestVersion).length;
-
-  // Count by update type
-  const majorUpdates = allDependencies.filter(
-    d => d.updateType === 'major'
-  ).length;
-  const minorUpdates = allDependencies.filter(
-    d => d.updateType === 'minor'
-  ).length;
-  const patchUpdates = allDependencies.filter(
-    d => d.updateType === 'patch'
-  ).length;
-
-  console.log(chalk.gray('═'.repeat(60)));
-  console.log(chalk.cyan.bold(`📊 Summary (${total} packages)`));
-  console.log(chalk.gray('═'.repeat(60)));
-
-  console.log(`  ${chalk.green('✓  Up to date:')} ${upToDate}`);
-
-  // Only show breakdown if there are outdated packages
-  if (outdated > 0) {
-    const breakdown = [];
-    if (majorUpdates > 0) {
-      breakdown.push(`${majorUpdates} major`);
-    }
-    if (minorUpdates > 0) {
-      breakdown.push(`${minorUpdates} minor`);
-    }
-    if (patchUpdates > 0) {
-      breakdown.push(`${patchUpdates} patch`);
-    }
-
-    const breakdownText =
-      breakdown.length > 0 ? ` ${chalk.gray(`(${breakdown.join(', ')})`)}` : '';
-    console.log(
-      `  ${chalk.yellow('⚠  Outdated:')} ${outdated}${breakdownText}`
-    );
-  } else {
-    console.log(`  ${chalk.yellow('⚠  Outdated:')} ${outdated}`);
-  }
-
-  console.log(`  ${chalk.magenta('?  Unknown:')} ${unknown}`);
-
-  console.log(chalk.gray('═'.repeat(60)));
-}
-
-export * from './cli';
-export * from './display';
-export * from './summary';
