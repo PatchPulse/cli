@@ -35,7 +35,7 @@ describe('Configuration Service', () => {
       expect(result).toBeNull();
     });
 
-    it('should read and parse .patchpulse.config.json file', () => {
+    it('should read and parse patchpulse.config.json file', () => {
       const mockConfig = {
         skip: ['lodash', 'express', '@types/*', 'test-*'],
       };
