@@ -144,8 +144,10 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Pull latest changes first
+          # Stash any unstaged changes, pull latest, then apply stash
+          git stash push -m "Temporary stash before pull"
           git pull origin main --rebase
+          git stash pop || true
 
           git add README.md
           if git diff --staged --quiet; then
