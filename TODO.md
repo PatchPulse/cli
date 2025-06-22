@@ -9,3 +9,7 @@ OR
 - Configurable options (i.e. `.patchpulserc` file, and normal CLI flags)
   - `packageManager` (npm, pnpm, yarn, bun)
   - overwrite path to `package.json`
+
+OR
+
+- Copy update commands to i.e. either patch, minor, major (dependent on detecting package manager)

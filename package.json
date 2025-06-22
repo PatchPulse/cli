@@ -41,7 +41,7 @@
     "deploy": "npm run build && npm publish"
   },
   "dependencies": {
-    "chalk": "5.4.1"
+    "chalk": "5.4.0"
   },
   "devDependencies": {
     "@types/node": "24.0.3",
