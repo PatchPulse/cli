@@ -24,7 +24,6 @@ async function main(): Promise<void> {
     const packageJson = await readPackageJson(packageJsonPath);
     const allDependencies: DependencyInfo[] = [];
 
-    // Define dependency types to check with their labels
     const dependencyTypeLabels: Record<string, string> = {
       dependencies: 'Dependencies',
       devDependencies: 'Dev Dependencies',
@@ -32,7 +31,6 @@ async function main(): Promise<void> {
       optionalDependencies: 'Optional Dependencies',
     };
 
-    // Check each dependency type in the order they appear in package.json
     for (const [key, value] of Object.entries(packageJson)) {
       if (dependencyTypeLabels[key] && value && typeof value === 'object') {
         try {
@@ -56,11 +54,10 @@ async function main(): Promise<void> {
       console.log(chalk.yellow('⚠️  No dependencies found to check'));
     }
 
-    // Don't let CLI update errors stop the main flow
     try {
       await checkForCliUpdate();
     } catch (error) {
-      // Silently fail for CLI updates
+      // Silently fail for CLI updates, i.e. don't let CLI update errors stop the main flow
     }
   } catch (error) {
     console.error(chalk.red(`Error: ${error}`));
@@ -68,10 +65,8 @@ async function main(): Promise<void> {
   }
 }
 
-// Handle command line arguments
 const args = process.argv.slice(2);
 
-// Check for unknown commands first
 const validFlags = [
   '--help',
   '-h',
@@ -79,6 +74,7 @@ const validFlags = [
   '-i',
   '--version',
   '-v',
+  '-l',
   '--license',
 ];
 const unknownArgs = args.filter(arg => !validFlags.includes(arg));
