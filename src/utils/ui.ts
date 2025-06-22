@@ -180,11 +180,9 @@ export function displaySummary(allDependencies: DependencyInfo[]): void {
 
     const breakdownText =
       breakdown.length > 0 ? ` ${chalk.gray(`(${breakdown.join(', ')})`)}` : '';
-    console.log(
-      `  ${chalk.yellow('⚠  Outdated:')} ${outdated}${breakdownText}`
-    );
+    console.log(`  ${chalk.blue('⚠  Outdated:')} ${outdated}${breakdownText}`);
   } else {
-    console.log(`  ${chalk.yellow('⚠  Outdated:')} ${outdated}`);
+    console.log(`  ${chalk.blue('⚠  Outdated:')} ${outdated}`);
   }
 
   console.log(`  ${chalk.magenta('?  Unknown:')} ${unknown}`);

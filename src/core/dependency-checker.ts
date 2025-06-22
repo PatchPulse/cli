@@ -69,8 +69,8 @@ function displayResults(dependencyInfos: DependencyInfo[]): void {
     let versionInfo: string;
 
     if (!dep.latestVersion) {
-      status = chalk.gray('UNKNOWN');
-      versionInfo = dep.currentVersion;
+      status = chalk.red('NOT FOUND');
+      versionInfo = `${dep.currentVersion} (not found on npm registry)`;
     } else if (dep.isOutdated) {
       const updateTypeColor = {
         major: chalk.yellow,

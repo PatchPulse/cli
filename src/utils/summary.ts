@@ -21,30 +21,25 @@ export function displaySummary(allDependencies: DependencyInfo[]): void {
   console.log(chalk.cyan.bold(`📊 Summary (${total} packages)`));
   console.log(chalk.gray('═'.repeat(60)));
 
-  console.log(`  ${chalk.green('✓  Up to date:')} ${upToDate}`);
+  console.log(`  ${chalk.green.bold('✓  Up to date:')} ${upToDate}`);
 
-  if (outdated > 0) {
+  const buildBreakdownText = (): string => {
     const breakdown = [];
-    if (majorUpdates > 0) {
-      breakdown.push(`${majorUpdates} major`);
-    }
-    if (minorUpdates > 0) {
-      breakdown.push(`${minorUpdates} minor`);
-    }
-    if (patchUpdates > 0) {
-      breakdown.push(`${patchUpdates} patch`);
-    }
+    if (majorUpdates > 0) breakdown.push(`${majorUpdates} major`);
+    if (minorUpdates > 0) breakdown.push(`${minorUpdates} minor`);
+    if (patchUpdates > 0) breakdown.push(`${patchUpdates} patch`);
 
-    const breakdownText =
-      breakdown.length > 0 ? ` ${chalk.gray(`(${breakdown.join(', ')})`)}` : '';
-    console.log(
-      `  ${chalk.yellow('⚠  Outdated:')} ${outdated}${breakdownText}`
-    );
-  } else {
-    console.log(`  ${chalk.yellow('⚠  Outdated:')} ${outdated}`);
-  }
+    return breakdown.length > 0
+      ? ` ${chalk.gray(`(${breakdown.join(', ')})`)}`
+      : '';
+  };
 
-  console.log(`  ${chalk.magenta('?  Unknown:')} ${unknown}`);
+  const breakdownText = outdated > 0 ? buildBreakdownText() : '';
+  console.log(
+    `  ${chalk.blueBright.bold('⚠  Outdated:')} ${outdated}${breakdownText}`
+  );
+
+  console.log(`  ${chalk.magenta.bold('?  Unknown:')} ${unknown}`);
 
   console.log(chalk.gray('═'.repeat(60)));
 }

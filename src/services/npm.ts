@@ -22,9 +22,10 @@ export async function getLatestVersion(
 
     if (!response.ok) {
       if (response.status === 404) {
-        console.warn(
-          chalk.yellow(`⚠️  Package "${packageName}" not found on npm registry`)
-        );
+        /**
+         * Returning undefined for not found packages
+         * - will be handled in display logic
+         */
         return undefined;
       }
       if (response.status === 429) {
