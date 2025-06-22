@@ -48,11 +48,24 @@ export function isVersionOutdated(current: string, latest: string): boolean {
     const currentVersion = parseVersion(current);
     const latestVersion = parseVersion(latest);
 
-    return (
-      latestVersion.major > currentVersion.major ||
-      latestVersion.minor > currentVersion.minor ||
-      latestVersion.patch > currentVersion.patch
-    );
+    // Compare major versions first
+    if (latestVersion.major > currentVersion.major) {
+      return true;
+    }
+    if (latestVersion.major < currentVersion.major) {
+      return false;
+    }
+
+    // If major versions are equal, compare minor versions
+    if (latestVersion.minor > currentVersion.minor) {
+      return true;
+    }
+    if (latestVersion.minor < currentVersion.minor) {
+      return false;
+    }
+
+    // If minor versions are equal, compare patch versions
+    return latestVersion.patch > currentVersion.patch;
   } catch (error) {
     // Handle invalid version formats gracefully
     console.warn(chalk.yellow(`⚠️  Invalid version format: ${error}`));
