@@ -31,7 +31,7 @@ npx patch-pulse --version
 npx patch-pulse --skip "lodash,@types/*"
 ```
 
-**Checks:** dependencies, devDependencies, peerDependencies, optionalDependencies
+**Checks:** `dependencies`, `devDependencies`, `peerDependencies`, `optionalDependencies`
 
 ## Configuration
 
@@ -104,9 +104,9 @@ npx patch-pulse --skip "react,react-dom"
 
 ## Troubleshooting
 
-**"No dependencies found"** - Run from directory with `package.json`
-**"Error reading package.json"** - Check JSON syntax and file permissions
-**Network errors** - Verify internet connection and npm registry access
+- **"No dependencies found"** - Run from directory with `package.json`
+- **"Error reading package.json"** - Check JSON syntax and file permissions
+- **Network errors** - Verify internet connection and npm registry access
 
 ## Contributing
 
