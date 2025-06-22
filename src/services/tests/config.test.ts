@@ -41,7 +41,7 @@ describe('Configuration Service', () => {
       };
 
       vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(join).mockReturnValue('/test/.patchpulse.config.json');
+      vi.mocked(join).mockReturnValue('/test/patchpulse.config.json');
       vi.mocked(readFileSync).mockReturnValue(JSON.stringify(mockConfig));
 
       const result = readConfigFile('/test');
@@ -51,7 +51,7 @@ describe('Configuration Service', () => {
 
     it('should handle invalid JSON gracefully', () => {
       vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(join).mockReturnValue('/test/.patchpulse.config.json');
+      vi.mocked(join).mockReturnValue('/test/patchpulse.config.json');
       vi.mocked(readFileSync).mockReturnValue('invalid json');
 
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -61,7 +61,7 @@ describe('Configuration Service', () => {
       expect(result).toBeNull();
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringMatching(
-          /Warning: Could not parse \.patchpulse.config.json: SyntaxError: Unexpected token/
+          /Warning: Could not parse patchpulse.config.json: SyntaxError: Unexpected token/
         )
       );
 
