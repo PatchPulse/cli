@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { readPackageJson } from './package';
+import { readPackageJson } from '../package';
 
 // Mock fs module
 vi.mock('fs', () => ({

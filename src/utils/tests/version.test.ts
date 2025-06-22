@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getUpdateType, isVersionOutdated, parseVersion } from './version';
+import { getUpdateType, isVersionOutdated, parseVersion } from '../version';
 
 describe('parseVersion', () => {
   it('should parse clean version strings', () => {
