@@ -58,7 +58,13 @@ Patch Pulse includes full intellisense support for configuration files:
 - **Documentation**: Hover tooltips with detailed explanations
 - **Examples**: See working examples for each option
 
-To enable intellisense, add this to your `.patchpulserc` file:
+#### Option 1: Automatic (Recommended)
+
+The schema is automatically available if you install `patch-pulse` locally. VS Code and other editors will provide intellisense without any additional setup.
+
+#### Option 2: Explicit Schema Reference
+
+For maximum compatibility, add this to your `.patchpulserc` file:
 
 ```json
 {
@@ -66,6 +72,8 @@ To enable intellisense, add this to your `.patchpulserc` file:
   "skip": ["lodash", "@types/*"]
 }
 ```
+
+**Note**: The schema is hosted on npm via unpkg.com, so it works for anyone who has internet access, regardless of whether they've installed the package locally.
 
 ### Skip Patterns
 
