@@ -4,5 +4,15 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit"
-  }
+  },
+  "json.schemas": [
+    {
+      "fileMatch": [
+        ".patchpulserc",
+        ".patchpulserc.json",
+        "patchpulse.config.json"
+      ],
+      "url": "./schemas/patchpulse-config.schema.json"
+    }
+  ]
 }

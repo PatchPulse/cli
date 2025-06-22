@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 
+import { MergedConfig, shouldSkipPackage } from '../services/config';
 import { getLatestVersion } from '../services/npm';
 import { DependencyInfo } from '../types';
 import { ProgressSpinner } from '../utils/progress';
@@ -7,7 +8,8 @@ import { getUpdateType, isVersionOutdated } from '../utils/version';
 
 export async function checkDependencyVersions(
   dependencies: Record<string, string> | undefined,
-  category: string
+  category: string,
+  config?: MergedConfig
 ): Promise<DependencyInfo[]> {
   if (!dependencies || Object.keys(dependencies).length === 0) {
     return [];
@@ -28,14 +30,24 @@ export async function checkDependencyVersions(
     const batch = packageNames.slice(i, i + concurrencyLimit);
     const batchPromises = batch.map(async name => {
       const version = dependencies[name];
-      const latestVersion = await getLatestVersion(name);
-      const isOutdated = latestVersion
-        ? isVersionOutdated(version, latestVersion)
-        : false;
-      const updateType =
-        latestVersion && isOutdated
-          ? getUpdateType(version, latestVersion)
-          : undefined;
+
+      // Check if package should be skipped
+      const isSkipped = config ? shouldSkipPackage(name, config) : false;
+
+      let latestVersion: string | undefined;
+      let isOutdated = false;
+      let updateType: 'patch' | 'minor' | 'major' | undefined;
+
+      if (!isSkipped) {
+        latestVersion = await getLatestVersion(name);
+        isOutdated = latestVersion
+          ? isVersionOutdated(version, latestVersion)
+          : false;
+        updateType =
+          latestVersion && isOutdated
+            ? getUpdateType(version, latestVersion)
+            : undefined;
+      }
 
       // Update progress for each completed package
       completedCount++;
@@ -49,6 +61,7 @@ export async function checkDependencyVersions(
         latestVersion,
         isOutdated,
         updateType,
+        isSkipped,
       };
     });
 
@@ -68,7 +81,10 @@ function displayResults(dependencyInfos: DependencyInfo[]): void {
     let status: string;
     let versionInfo: string;
 
-    if (!dep.latestVersion) {
+    if (dep.isSkipped) {
+      status = chalk.gray('SKIPPED');
+      versionInfo = dep.currentVersion;
+    } else if (!dep.latestVersion) {
       status = chalk.red('NOT FOUND');
       versionInfo = `${dep.currentVersion} (not found on npm registry)`;
     } else if (dep.isOutdated) {

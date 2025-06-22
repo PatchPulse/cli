@@ -3,6 +3,11 @@
 import chalk from 'chalk';
 import { join } from 'path';
 import { checkDependencyVersions } from './core/dependency-checker';
+import {
+  mergeConfigs,
+  parseCliConfig,
+  readConfigFile,
+} from './services/config';
 import { checkForCliUpdate } from './services/npm';
 import { readPackageJson } from './services/package';
 import { DependencyInfo } from './types';
@@ -24,6 +29,11 @@ async function main(): Promise<void> {
     const packageJson = await readPackageJson(packageJsonPath);
     const allDependencies: DependencyInfo[] = [];
 
+    // Read configuration
+    const fileConfig = readConfigFile();
+    const cliConfig = parseCliConfig(process.argv.slice(2));
+    const config = mergeConfigs(fileConfig, cliConfig);
+
     const dependencyTypeLabels: Record<string, string> = {
       dependencies: 'Dependencies',
       devDependencies: 'Dev Dependencies',
@@ -36,7 +46,8 @@ async function main(): Promise<void> {
         try {
           const dependencies = await checkDependencyVersions(
             value as Record<string, string>,
-            dependencyTypeLabels[key]
+            dependencyTypeLabels[key],
+            config
           );
           allDependencies.push(...dependencies);
         } catch (error) {
@@ -68,16 +79,31 @@ async function main(): Promise<void> {
 const args = process.argv.slice(2);
 
 const validFlags = [
-  '--help',
   '-h',
-  '--info',
+  '--help',
   '-i',
-  '--version',
+  '--info',
   '-v',
+  '--version',
   '-l',
   '--license',
+  '-s',
+  '--skip',
 ];
-const unknownArgs = args.filter(arg => !validFlags.includes(arg));
+
+// Filter out unknown arguments, but allow arguments that come after -s or --skip
+const unknownArgs: string[] = [];
+for (let i = 0; i < args.length; i++) {
+  const arg = args[i];
+  if (!validFlags.includes(arg)) {
+    // Check if this argument comes after -s or --skip
+    const isAfterSkip =
+      i > 0 && (args[i - 1] === '-s' || args[i - 1] === '--skip');
+    if (!isAfterSkip) {
+      unknownArgs.push(arg);
+    }
+  }
+}
 
 if (unknownArgs.length > 0) {
   console.error(
@@ -98,6 +124,12 @@ if (unknownArgs.length > 0) {
   );
   console.log(
     chalk.white('  npx patch-pulse --license') + chalk.gray(' # Show license')
+  );
+  console.log();
+  console.log(chalk.blue.bold(' Configuration options:'));
+  console.log(
+    chalk.white('  npx patch-pulse -s <packages>') +
+      chalk.gray('     # Skip packages (supports exact names and patterns)')
   );
   console.log();
   console.log(

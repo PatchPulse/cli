@@ -4,7 +4,6 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 import { VERSION } from '../gen/version.gen';
-import { DependencyInfo } from '../types';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -53,6 +52,15 @@ ${chalk.cyan.bold.underline('⚙️  Options:')}
   ${chalk.white('-v, --version')}            ${chalk.gray('Show version information')}
   ${chalk.white('-l, --license')}            ${chalk.gray('Show license information')}
 
+${chalk.cyan.bold.underline('🔧 Configuration Options:')}
+  ${chalk.white('-s, --skip <packages>')}    ${chalk.gray('Skip packages (supports exact names and patterns)')}
+
+${chalk.cyan.bold.underline('📁 Configuration File:')}
+  Create a \`.patchpulserc\` file in your project root:
+  ${chalk.gray('{')}
+    ${chalk.gray('"skip": ["lodash", "@types/*", "test-*"]')}
+  ${chalk.gray('}')}
+
 ${chalk.cyan.bold.underline('📝 Description:')}
   Reads the \`package.json\` file in the current directory and displays
   information about your project's dependencies, including version
@@ -60,8 +68,9 @@ ${chalk.cyan.bold.underline('📝 Description:')}
 
 ${chalk.cyan.bold.underline('💡 Examples:')}
   ${chalk.white('npx patch-pulse')}          ${chalk.gray('# Check dependencies in current directory')}
-  ${chalk.white('npx patch-pulse -v')}       ${chalk.gray('# Show version information')}
-  ${chalk.white('npx patch-pulse -l')}       ${chalk.gray('# Show license information')}
+  ${chalk.white('npx patch-pulse --version')}                ${chalk.gray('# Show version information')}
+  ${chalk.white('npx patch-pulse --license')}                ${chalk.gray('# Show license information')}
+  ${chalk.white('npx patch-pulse --skip "lodash,@types/*"')} ${chalk.gray('# Skip specific packages and patterns')}
 
 ${chalk.cyan.bold.underline('🔗 Links:')}
   ${chalk.blue('📚 Docs:')}      ${chalk.white.underline('https://github.com/PatchPulse/cli')}
@@ -140,54 +149,6 @@ export function displayThankYouMessage(): void {
     chalk.cyan.bold('💡 For more info:') +
       ` ${chalk.white.bold('npx patch-pulse --help')}`
   );
-}
-
-export function displaySummary(allDependencies: DependencyInfo[]): void {
-  const total = allDependencies.length;
-  const upToDate = allDependencies.filter(d => !d.isOutdated).length;
-  const outdated = allDependencies.filter(d => d.isOutdated).length;
-  const unknown = allDependencies.filter(d => !d.latestVersion).length;
-
-  // Count by update type
-  const majorUpdates = allDependencies.filter(
-    d => d.updateType === 'major'
-  ).length;
-  const minorUpdates = allDependencies.filter(
-    d => d.updateType === 'minor'
-  ).length;
-  const patchUpdates = allDependencies.filter(
-    d => d.updateType === 'patch'
-  ).length;
-
-  console.log(chalk.gray('═'.repeat(60)));
-  console.log(chalk.cyan.bold(`📊 Summary (${total} packages)`));
-  console.log(chalk.gray('═'.repeat(60)));
-
-  console.log(`  ${chalk.green('✓  Up to date:')} ${upToDate}`);
-
-  // Only show breakdown if there are outdated packages
-  if (outdated > 0) {
-    const breakdown = [];
-    if (majorUpdates > 0) {
-      breakdown.push(`${majorUpdates} major`);
-    }
-    if (minorUpdates > 0) {
-      breakdown.push(`${minorUpdates} minor`);
-    }
-    if (patchUpdates > 0) {
-      breakdown.push(`${patchUpdates} patch`);
-    }
-
-    const breakdownText =
-      breakdown.length > 0 ? ` ${chalk.gray(`(${breakdown.join(', ')})`)}` : '';
-    console.log(`  ${chalk.blue('⚠  Outdated:')} ${outdated}${breakdownText}`);
-  } else {
-    console.log(`  ${chalk.blue('⚠  Outdated:')} ${outdated}`);
-  }
-
-  console.log(`  ${chalk.magenta('?  Unknown:')} ${unknown}`);
-
-  console.log(chalk.gray('═'.repeat(60)));
 }
 
 export * from './cli';

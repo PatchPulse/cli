@@ -26,9 +26,63 @@ npx patch-pulse --help
 
 # Show version
 npx patch-pulse --version
+
+# Skip specific packages
+npx patch-pulse --skip "lodash,@types/*"
 ```
 
 **Checks:** dependencies, devDependencies, peerDependencies, optionalDependencies
+
+## Configuration
+
+Patch Pulse supports configuration files for persistent settings. Create one of these files in your project root:
+
+- `.patchpulserc`
+- `.patchpulserc.json`
+- `patchpulse.config.json`
+
+### Configuration File Example
+
+```json
+{
+  "skip": ["lodash", "@types/*", "test-*"]
+}
+```
+
+### Intellisense Support ✨
+
+Patch Pulse includes full intellisense support for configuration files:
+
+- **Autocomplete**: Get suggestions for configuration options
+- **Validation**: Real-time error checking for invalid configurations
+- **Documentation**: Hover tooltips with detailed explanations
+- **Examples**: See working examples for each option
+
+To enable intellisense, add this to your `.patchpulserc` file:
+
+```json
+{
+  "$schema": "https://unpkg.com/patch-pulse@latest/schemas/patchpulse-config.schema.json",
+  "skip": ["lodash", "@types/*"]
+}
+```
+
+### Skip Patterns
+
+The `skip` array supports multiple pattern types:
+
+- **Exact names**: `"lodash"`, `"chalk"`
+- **Glob patterns**: `"@types/*"`, `"test-*"`, `"*-dev"`
+- **Regex patterns**: `".*-dev"`, `"^@angular/.*"`, `"zone\\.js"`
+
+### CLI vs File Configuration
+
+CLI arguments override file configuration:
+
+```bash
+# This will override any skip settings in .patchpulserc
+npx patch-pulse --skip "react,react-dom"
+```
 
 ## Example
 
