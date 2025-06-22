@@ -125,6 +125,8 @@ This project is licensed under MIT - see the [LICENSE](LICENSE) file for details
 
 This Patch Pulse CLI tool is maintained by [@BarryMichaelDoyle](https://github.com/barrymichaeldoyle).
 
+**🎥 Live Development:** Sometimes I stream my development process on [Twitch](https://twitch.tv/barrymichaeldoyle) - feel free to drop by and say hello!
+
 ---
 
 **Made with ❤️ for the Node.js community**
