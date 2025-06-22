@@ -14,13 +14,13 @@ export interface MergedConfig {
 }
 
 const CONFIG_FILENAMES = [
-  '.patchpulserc',
-  '.patchpulserc.json',
   'patchpulse.config.json',
+  '.patchpulserc.json',
+  '.patchpulserc',
 ];
 
 /**
- * Reads configuration from .patchpulserc file
+ * Reads configuration from .patchpulse.config.json file
  * @param cwd - The current working directory
  * @returns The configuration from the file
  */

@@ -37,9 +37,9 @@ npx patch-pulse --skip "lodash,@types/*"
 
 Patch Pulse supports configuration files for persistent settings. Create one of these files in your project root:
 
-- `.patchpulserc`
-- `.patchpulserc.json`
 - `patchpulse.config.json`
+- `.patchpulserc.json`
+- `.patchpulserc`
 
 ### Configuration File Example
 
@@ -48,32 +48,6 @@ Patch Pulse supports configuration files for persistent settings. Create one of 
   "skip": ["lodash", "@types/*", "test-*"]
 }
 ```
-
-### Intellisense Support ✨
-
-Patch Pulse includes full intellisense support for configuration files:
-
-- **Autocomplete**: Get suggestions for configuration options
-- **Validation**: Real-time error checking for invalid configurations
-- **Documentation**: Hover tooltips with detailed explanations
-- **Examples**: See working examples for each option
-
-#### Option 1: Automatic (Recommended)
-
-The schema is automatically available if you install `patch-pulse` locally. VS Code and other editors will provide intellisense without any additional setup.
-
-#### Option 2: Explicit Schema Reference
-
-For maximum compatibility, add this to your `.patchpulserc` file:
-
-```json
-{
-  "$schema": "https://unpkg.com/patch-pulse@latest/schemas/patchpulse-config.schema.json",
-  "skip": ["lodash", "@types/*"]
-}
-```
-
-**Note**: The schema is hosted on npm via unpkg.com, so it works for anyone who has internet access, regardless of whether they've installed the package locally.
 
 ### Skip Patterns
 

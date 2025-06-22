@@ -1,5 +1,4 @@
 {
-  "$schema": "https://unpkg.com/patch-pulse@latest/schemas/patchpulse-config.schema.json",
   "skip": [
     // Exact package names
     "lodash",
