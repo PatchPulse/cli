@@ -8,6 +8,7 @@ export default defineConfig({
     exclude: ['node_modules', 'lib', 'dist'],
     coverage: {
       include: ['src/**/*.ts'],
+      reporter: ['text', 'json', 'html', 'lcov'],
     },
   },
 });
