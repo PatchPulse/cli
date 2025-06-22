@@ -1,6 +1,7 @@
 {
   "name": "patch-pulse",
-  "version": "2.4.3",
+  "version": "2.4.4",
+  "description": "Check for outdated npm dependencies",
   "type": "module",
   "main": "lib/index.js",
   "bin": {
