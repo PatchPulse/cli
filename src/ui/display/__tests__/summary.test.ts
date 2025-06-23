@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type DependencyInfo } from '../../types';
-import { displaySummary } from '../display/summary';
+import { type DependencyInfo } from '../../../types';
+import { displaySummary } from '../summary';
 
 describe('displaySummary', () => {
   let consoleSpy: ReturnType<typeof vi.spyOn>;

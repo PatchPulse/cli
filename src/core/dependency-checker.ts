@@ -4,7 +4,8 @@ import { PatchPulseConfig, shouldSkipPackage } from '../services/config';
 import { getLatestVersion } from '../services/npm';
 import { type DependencyInfo } from '../types';
 import { ProgressSpinner } from '../ui/progress';
-import { getUpdateType, isVersionOutdated } from '../ui/version';
+import { getUpdateType } from '../utils/getUpdateType';
+import { isVersionOutdated } from '../utils/isVersionOutdated';
 
 export async function checkDependencyVersions(
   dependencies: Record<string, string> | undefined,
