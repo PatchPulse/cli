@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { VERSION } from '../gen/version.gen';
-import { displayUpdateAvailable } from '../ui';
-import { type NpmPackageInfo } from '../utils';
+import { type NpmPackageInfo } from '../types';
+import { displayUpdateAvailable } from '../ui/display/updateAvailable';
 import { packageCache } from './cache';
 
 export async function getLatestVersion(

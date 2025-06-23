@@ -1,6 +1,6 @@
 {
   "name": "patch-pulse",
-  "version": "2.6.1-beta.1",
+  "version": "2.6.1",
   "description": "Check for outdated npm dependencies",
   "type": "module",
   "bin": {
@@ -11,7 +11,6 @@
   },
   "files": [
     "lib/**/*",
-    "schemas/**/*",
     "README.md",
     "LICENSE"
   ],
@@ -51,7 +50,8 @@
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
     "ci-check": "node scripts/ci-check.cjs",
-    "deploy": "npm run build && npm publish"
+    "deploy": "npm run build && npm publish --tag beta",
+    "deploy:latest": "npm run build && npm publish"
   },
   "dependencies": {
     "chalk": "5.4.1"

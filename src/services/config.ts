@@ -5,14 +5,6 @@ export interface PatchPulseConfig {
   skip?: string[];
 }
 
-export interface CliConfig {
-  skip?: string[];
-}
-
-export interface MergedConfig {
-  skip: string[];
-}
-
 const CONFIG_FILENAMES = [
   'patchpulse.config.json',
   '.patchpulserc.json',
@@ -48,8 +40,8 @@ export function readConfigFile(
  * @param args - The command line arguments
  * @returns The parsed configuration
  */
-export function parseCliConfig(args: string[]): CliConfig {
-  const config: CliConfig = {};
+export function parseCliConfig(args: string[]): PatchPulseConfig {
+  const config: PatchPulseConfig = {};
 
   const skipIndex = args.indexOf('--skip');
   const shortSkipIndex = args.indexOf('-s');
@@ -76,9 +68,9 @@ export function parseCliConfig(args: string[]): CliConfig {
  */
 export function mergeConfigs(
   fileConfig: PatchPulseConfig | null,
-  cliConfig: CliConfig
-): MergedConfig {
-  const merged: MergedConfig = {
+  cliConfig: PatchPulseConfig
+): Required<PatchPulseConfig> {
+  const merged: Required<PatchPulseConfig> = {
     skip: [],
   };
 
@@ -122,30 +114,32 @@ function validateConfig(config: any): PatchPulseConfig {
  */
 export function shouldSkipPackage(
   packageName: string,
-  config: MergedConfig
+  config: PatchPulseConfig
 ): boolean {
-  return config.skip.some(pattern => {
-    // If the pattern contains regex special characters (other than * and ?), treat as regex
-    if (/[. +?^${}()|[\]]/.test(pattern.replace(['*', '?'].join('|'), ''))) {
-      try {
-        const regex = new RegExp(pattern);
+  return (
+    config.skip?.some(pattern => {
+      // If the pattern contains regex special characters (other than * and ?), treat as regex
+      if (/[. +?^${}()|[\]]/.test(pattern.replace(['*', '?'].join('|'), ''))) {
+        try {
+          const regex = new RegExp(pattern);
+          return regex.test(packageName);
+        } catch {
+          return packageName.includes(pattern);
+        }
+      } else if (pattern.includes('*') || pattern.includes('?')) {
+        // Convert glob to regex
+        const regexPattern =
+          '^' +
+          pattern
+            .replace(/([.+^${}()|[\\]])/g, '\\$1') // Escape regex special chars
+            .replace(/\*/g, '.*') // * => .*
+            .replace(/\?/g, '.') + // ? => .
+          '$';
+        const regex = new RegExp(regexPattern);
         return regex.test(packageName);
-      } catch {
-        return packageName.includes(pattern);
+      } else {
+        return packageName === pattern;
       }
-    } else if (pattern.includes('*') || pattern.includes('?')) {
-      // Convert glob to regex
-      const regexPattern =
-        '^' +
-        pattern
-          .replace(/([.+^${}()|[\\]])/g, '\\$1') // Escape regex special chars
-          .replace(/\*/g, '.*') // * => .*
-          .replace(/\?/g, '.') + // ? => .
-        '$';
-      const regex = new RegExp(regexPattern);
-      return regex.test(packageName);
-    } else {
-      return packageName === pattern;
-    }
-  });
+    }) ?? false
+  );
 }

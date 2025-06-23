@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { type VersionInfo } from '../utils';
+import { type VersionInfo } from '../types';
 
 export function parseVersion(version: string): VersionInfo {
   // Handle version ranges like ^3.3.1, ~3.3.1, >=3.3.1, etc.

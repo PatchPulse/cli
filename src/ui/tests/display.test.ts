@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { displayVersion } from '../cli';
-import { createCenteredBox, displayMadeWithLove } from '../display';
+import { createCenteredBox } from '../createCenteredBox';
+import { displayMadeWithLove } from '../display/madeWithLove';
+import { displayVersion } from '../display/version';
 
 const mockConsoleLog = vi.fn();
 

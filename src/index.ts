@@ -10,17 +10,20 @@ import {
 } from './services/config';
 import { checkForCliUpdate } from './services/npm';
 import { readPackageJson } from './services/package';
-import {
-  displayHelp,
-  displayLicense,
-  displaySummary,
-  displayThankYouMessage,
-  displayVersion,
-} from './ui';
-import { type DependencyInfo } from './utils';
+import { type DependencyInfo } from './types';
+import { displayHelp } from './ui/display/help';
+import { displayLicense } from './ui/display/license';
+import { displaySummary } from './ui/display/summary';
+import { displayThankYouMessage } from './ui/display/thankYouMessage';
+import { displayUnknownArguments } from './ui/display/unknownArguments';
+import { displayVersion } from './ui/display/version';
+import { getUnknownArgs } from './utils/getUnknownArgs';
+import { hasAnyFlag } from './utils/hasAnyFlag';
 
 async function main(): Promise<void> {
-  // Force colors in output
+  /**
+   * Force colors in output
+   */
   process.env.FORCE_COLOR = '1';
 
   const packageJsonPath = join(process.cwd(), 'package.json');
@@ -90,71 +93,23 @@ const validFlags = [
   '-s',
   '--skip',
 ];
-
-// Filter out unknown arguments, but allow arguments that come after -s or --skip
-const unknownArgs: string[] = [];
-for (let i = 0; i < args.length; i++) {
-  const arg = args[i];
-  if (!validFlags.includes(arg)) {
-    // Check if this argument comes after -s or --skip
-    const isAfterSkip =
-      i > 0 && (args[i - 1] === '-s' || args[i - 1] === '--skip');
-    if (!isAfterSkip) {
-      unknownArgs.push(arg);
-    }
-  }
-}
-
+const unknownArgs = getUnknownArgs(args, validFlags);
 if (unknownArgs.length > 0) {
-  console.error(
-    chalk.red.bold('❌ Unknown command:') +
-      ` ${chalk.white(unknownArgs.join(' '))}`
-  );
-  console.log();
-  console.log(chalk.blue.bold(' Available commands:'));
-  console.log(
-    chalk.white('  npx patch-pulse') +
-      chalk.gray('           # Check dependencies')
-  );
-  console.log(
-    chalk.white('  npx patch-pulse --help') + chalk.gray('    # Show help')
-  );
-  console.log(
-    chalk.white('  npx patch-pulse --version') + chalk.gray(' # Show version')
-  );
-  console.log(
-    chalk.white('  npx patch-pulse --license') + chalk.gray(' # Show license')
-  );
-  console.log();
-  console.log(chalk.blue.bold(' Configuration options:'));
-  console.log(
-    chalk.white('  npx patch-pulse -s <packages>') +
-      chalk.gray('     # Skip packages (supports exact names and patterns)')
-  );
-  console.log();
-  console.log(
-    chalk.cyan.bold('For more information:') +
-      ` ${chalk.white.bold('npx patch-pulse --help')}`
-  );
+  displayUnknownArguments(unknownArgs);
   process.exit(1);
 }
 
-if (
-  args.includes('--help') ||
-  args.includes('-h') ||
-  args.includes('--info') ||
-  args.includes('-i')
-) {
+if (hasAnyFlag(args, ['--help', '-h', '--info', '-i'])) {
   displayHelp();
   process.exit(0);
 }
 
-if (args.includes('--version') || args.includes('-v')) {
+if (hasAnyFlag(args, ['--version', '-v'])) {
   displayVersion();
   process.exit(0);
 }
 
-if (args.includes('--license') || args.includes('-l')) {
+if (hasAnyFlag(args, ['--license', '-l'])) {
   displayLicense();
   process.exit(0);
 }

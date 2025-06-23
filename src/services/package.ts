@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'fs';
 
-import { type PackageJson } from '../utils';
+import { type PackageJson } from '../types';
 
 export async function readPackageJson(path: string): Promise<PackageJson> {
   if (!existsSync(path)) {

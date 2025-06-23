@@ -1,15 +1,15 @@
 import chalk from 'chalk';
 
-import { MergedConfig, shouldSkipPackage } from '../services/config';
+import { PatchPulseConfig, shouldSkipPackage } from '../services/config';
 import { getLatestVersion } from '../services/npm';
+import { type DependencyInfo } from '../types';
 import { ProgressSpinner } from '../ui/progress';
 import { getUpdateType, isVersionOutdated } from '../ui/version';
-import { type DependencyInfo } from '../utils';
 
 export async function checkDependencyVersions(
   dependencies: Record<string, string> | undefined,
   category: string,
-  config?: MergedConfig
+  config?: PatchPulseConfig
 ): Promise<DependencyInfo[]> {
   if (!dependencies || Object.keys(dependencies).length === 0) {
     return [];

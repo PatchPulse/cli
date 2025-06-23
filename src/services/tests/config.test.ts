@@ -6,8 +6,6 @@ import {
   parseCliConfig,
   readConfigFile,
   shouldSkipPackage,
-  type CliConfig,
-  type MergedConfig,
   type PatchPulseConfig,
 } from '../config';
 
@@ -109,7 +107,7 @@ describe('Configuration Service', () => {
         skip: ['lodash', '@types/*'],
       };
 
-      const cliConfig: CliConfig = {
+      const cliConfig: PatchPulseConfig = {
         skip: ['express', 'test-*'],
       };
 
@@ -121,7 +119,7 @@ describe('Configuration Service', () => {
     });
 
     it('should handle null file config', () => {
-      const cliConfig: CliConfig = {
+      const cliConfig: PatchPulseConfig = {
         skip: ['express', 'test-*'],
       };
 
@@ -147,7 +145,7 @@ describe('Configuration Service', () => {
 
   describe('shouldSkipPackage', () => {
     it('should skip exact matches', () => {
-      const config: MergedConfig = {
+      const config: PatchPulseConfig = {
         skip: ['lodash', 'express'],
       };
 
@@ -157,7 +155,7 @@ describe('Configuration Service', () => {
     });
 
     it('should skip packages matching patterns', () => {
-      const config: MergedConfig = {
+      const config: PatchPulseConfig = {
         skip: ['@types/*', 'test-*'],
       };
 
@@ -170,7 +168,7 @@ describe('Configuration Service', () => {
     });
 
     it('should handle invalid regex patterns gracefully', () => {
-      const config: MergedConfig = {
+      const config: PatchPulseConfig = {
         skip: ['[invalid-regex'],
       };
 
@@ -178,7 +176,7 @@ describe('Configuration Service', () => {
     });
 
     it('should check both exact matches and patterns', () => {
-      const config: MergedConfig = {
+      const config: PatchPulseConfig = {
         skip: ['lodash', '@types/*'],
       };
 
@@ -188,7 +186,7 @@ describe('Configuration Service', () => {
     });
 
     it('should treat patterns without regex chars as exact matches', () => {
-      const config: MergedConfig = {
+      const config: PatchPulseConfig = {
         skip: ['lodash', 'test-package'],
       };
 
