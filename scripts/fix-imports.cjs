@@ -11,6 +11,11 @@ function fixImportsInFile(filePath) {
     /from ['"](\.\/[^'"]*?)['"]/g,
     (match, importPath) => {
       if (!importPath.endsWith('.js')) {
+        // Check if this is a directory import
+        const dirPath = path.join(path.dirname(filePath), importPath);
+        if (fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory()) {
+          return `from '${importPath}/index.js'`;
+        }
         return `from '${importPath}.js'`;
       }
       return match;
@@ -22,6 +27,11 @@ function fixImportsInFile(filePath) {
     /from ['"](\.\.\/[^'"]*?)['"]/g,
     (match, importPath) => {
       if (!importPath.endsWith('.js')) {
+        // Check if this is a directory import
+        const dirPath = path.join(path.dirname(filePath), importPath);
+        if (fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory()) {
+          return `from '${importPath}/index.js'`;
+        }
         return `from '${importPath}.js'`;
       }
       return match;
