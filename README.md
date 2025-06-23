@@ -65,7 +65,7 @@ The `skip` array supports multiple pattern types:
 CLI arguments override file configuration:
 
 ```bash
-# This will override any skip settings in .patchpulserc
+# This will override any skip settings in patchpulse.config.json
 npx patch-pulse --skip "react,react-dom"
 ```
 
