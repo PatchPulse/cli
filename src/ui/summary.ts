@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { DependencyInfo } from '../types';
+import { type DependencyInfo } from '../utils';
 
 export function displaySummary(allDependencies: DependencyInfo[]): void {
   const total = allDependencies.length;

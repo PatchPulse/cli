@@ -10,14 +10,14 @@ import {
 } from './services/config';
 import { checkForCliUpdate } from './services/npm';
 import { readPackageJson } from './services/package';
-import { DependencyInfo } from './types';
 import {
   displayHelp,
   displayLicense,
   displaySummary,
   displayThankYouMessage,
   displayVersion,
-} from './utils/ui';
+} from './ui';
+import { type DependencyInfo } from './utils';
 
 async function main(): Promise<void> {
   // Force colors in output

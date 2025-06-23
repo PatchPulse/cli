@@ -2,9 +2,9 @@ import chalk from 'chalk';
 
 import { MergedConfig, shouldSkipPackage } from '../services/config';
 import { getLatestVersion } from '../services/npm';
-import { DependencyInfo } from '../types';
-import { ProgressSpinner } from '../utils/progress';
-import { getUpdateType, isVersionOutdated } from '../utils/version';
+import { ProgressSpinner } from '../ui/progress';
+import { getUpdateType, isVersionOutdated } from '../ui/version';
+import { type DependencyInfo } from '../utils';
 
 export async function checkDependencyVersions(
   dependencies: Record<string, string> | undefined,

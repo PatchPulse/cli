@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { DependencyInfo } from '../../types';
+import { type DependencyInfo } from '../../utils';
 import { displaySummary } from '../summary';
 
 describe('displaySummary', () => {

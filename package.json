@@ -1,11 +1,13 @@
 {
   "name": "patch-pulse",
-  "version": "2.5.5",
+  "version": "2.6.0",
   "description": "Check for outdated npm dependencies",
   "type": "module",
-  "main": "lib/index.js",
   "bin": {
     "patch-pulse": "lib/index.js"
+  },
+  "exports": {
+    "./utils": "./lib/utils/index.js"
   },
   "files": [
     "lib/**/*",
