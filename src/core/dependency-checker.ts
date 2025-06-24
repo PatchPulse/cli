@@ -41,8 +41,9 @@ export async function checkDependencyVersions(
       if (!isSkipped) {
         latestVersion = await getLatestVersion(packageName);
 
-        // Don't try to compare versions if current version is "latest"
-        if (version === 'latest') {
+        // Don't try to compare versions if current version is not a standard semver
+        const isStandardSemver = /^\d+\.\d+\.\d+/.test(version);
+        if (!isStandardSemver) {
           isOutdated = false;
           updateType = undefined;
         } else if (latestVersion) {
@@ -94,6 +95,9 @@ function displayResults(dependencyInfos: DependencyInfo[]): void {
     } else if (dep.currentVersion === 'latest') {
       status = chalk.cyan('LATEST TAG');
       versionInfo = `latest → ${chalk.cyan(dep.latestVersion)} (actual latest version)`;
+    } else if (!/^\d+\.\d+\.\d+/.test(dep.currentVersion)) {
+      status = chalk.blue('VERSION RANGE');
+      versionInfo = `${dep.currentVersion} → ${chalk.cyan(dep.latestVersion)} (latest available)`;
     } else if (dep.isOutdated) {
       const updateTypeColor = {
         major: chalk.yellow,

@@ -16,14 +16,14 @@ describe('displaySummary', () => {
   it('should display summary with all dependency types', () => {
     const dependencies: DependencyInfo[] = [
       {
-        name: 'chalk',
+        packageName: 'chalk',
         currentVersion: '5.0.0',
         latestVersion: '5.0.0',
         isOutdated: false,
         isSkipped: false,
       },
       {
-        name: 'lodash',
+        packageName: 'lodash',
         currentVersion: '4.17.0',
         latestVersion: '4.17.21',
         isOutdated: true,
@@ -31,7 +31,7 @@ describe('displaySummary', () => {
         isSkipped: false,
       },
       {
-        name: 'express',
+        packageName: 'express',
         currentVersion: '4.17.0',
         latestVersion: '4.18.0',
         isOutdated: true,
@@ -39,7 +39,7 @@ describe('displaySummary', () => {
         isSkipped: false,
       },
       {
-        name: 'react',
+        packageName: 'react',
         currentVersion: '17.0.0',
         latestVersion: '18.0.0',
         isOutdated: true,
@@ -47,14 +47,14 @@ describe('displaySummary', () => {
         isSkipped: false,
       },
       {
-        name: 'unknown-pkg',
+        packageName: 'unknown-pkg',
         currentVersion: '1.0.0',
         latestVersion: undefined,
         isOutdated: false,
         isSkipped: false,
       },
       {
-        name: 'skipped-pkg',
+        packageName: 'skipped-pkg',
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         isOutdated: true,
@@ -84,14 +84,14 @@ describe('displaySummary', () => {
   it('should display summary with only up-to-date packages', () => {
     const dependencies: DependencyInfo[] = [
       {
-        name: 'chalk',
+        packageName: 'chalk',
         currentVersion: '5.0.0',
         latestVersion: '5.0.0',
         isOutdated: false,
         isSkipped: false,
       },
       {
-        name: 'lodash',
+        packageName: 'lodash',
         currentVersion: '4.17.21',
         latestVersion: '4.17.21',
         isOutdated: false,
@@ -121,7 +121,7 @@ describe('displaySummary', () => {
   it('should display summary with only outdated packages', () => {
     const dependencies: DependencyInfo[] = [
       {
-        name: 'lodash',
+        packageName: 'lodash',
         currentVersion: '4.17.0',
         latestVersion: '4.17.21',
         isOutdated: true,
@@ -129,7 +129,7 @@ describe('displaySummary', () => {
         isSkipped: false,
       },
       {
-        name: 'express',
+        packageName: 'express',
         currentVersion: '4.17.0',
         latestVersion: '4.18.0',
         isOutdated: true,
@@ -137,7 +137,7 @@ describe('displaySummary', () => {
         isSkipped: false,
       },
       {
-        name: 'react',
+        packageName: 'react',
         currentVersion: '17.0.0',
         latestVersion: '18.0.0',
         isOutdated: true,
@@ -166,14 +166,14 @@ describe('displaySummary', () => {
   it('should display summary with only unknown packages', () => {
     const dependencies: DependencyInfo[] = [
       {
-        name: 'unknown-pkg1',
+        packageName: 'unknown-pkg1',
         currentVersion: '1.0.0',
         latestVersion: undefined,
         isOutdated: false,
         isSkipped: false,
       },
       {
-        name: 'unknown-pkg2',
+        packageName: 'unknown-pkg2',
         currentVersion: '2.0.0',
         latestVersion: undefined,
         isOutdated: false,
@@ -201,14 +201,14 @@ describe('displaySummary', () => {
   it('should display summary with only skipped packages', () => {
     const dependencies: DependencyInfo[] = [
       {
-        name: 'skipped-pkg1',
+        packageName: 'skipped-pkg1',
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         isOutdated: true,
         isSkipped: true,
       },
       {
-        name: 'skipped-pkg2',
+        packageName: 'skipped-pkg2',
         currentVersion: '1.0.0',
         latestVersion: '1.0.0',
         isOutdated: false,
@@ -260,7 +260,7 @@ describe('displaySummary', () => {
   it('should handle outdated packages without update type breakdown', () => {
     const dependencies: DependencyInfo[] = [
       {
-        name: 'lodash',
+        packageName: 'lodash',
         currentVersion: '4.17.0',
         latestVersion: '4.17.21',
         isOutdated: true,
@@ -279,7 +279,7 @@ describe('displaySummary', () => {
   it('should handle mixed update types correctly', () => {
     const dependencies: DependencyInfo[] = [
       {
-        name: 'major1',
+        packageName: 'major1',
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         isOutdated: true,
@@ -287,7 +287,7 @@ describe('displaySummary', () => {
         isSkipped: false,
       },
       {
-        name: 'major2',
+        packageName: 'major2',
         currentVersion: '1.0.0',
         latestVersion: '3.0.0',
         isOutdated: true,
@@ -295,7 +295,7 @@ describe('displaySummary', () => {
         isSkipped: false,
       },
       {
-        name: 'minor1',
+        packageName: 'minor1',
         currentVersion: '1.0.0',
         latestVersion: '1.1.0',
         isOutdated: true,
@@ -303,7 +303,7 @@ describe('displaySummary', () => {
         isSkipped: false,
       },
       {
-        name: 'patch1',
+        packageName: 'patch1',
         currentVersion: '1.0.0',
         latestVersion: '1.0.1',
         isOutdated: true,
@@ -311,7 +311,7 @@ describe('displaySummary', () => {
         isSkipped: false,
       },
       {
-        name: 'patch2',
+        packageName: 'patch2',
         currentVersion: '1.0.0',
         latestVersion: '1.0.2',
         isOutdated: true,
@@ -330,28 +330,28 @@ describe('displaySummary', () => {
   it('should exclude skipped packages from up-to-date and unknown counts', () => {
     const dependencies: DependencyInfo[] = [
       {
-        name: 'up-to-date',
+        packageName: 'up-to-date',
         currentVersion: '1.0.0',
         latestVersion: '1.0.0',
         isOutdated: false,
         isSkipped: false,
       },
       {
-        name: 'up-to-date-skipped',
+        packageName: 'up-to-date-skipped',
         currentVersion: '1.0.0',
         latestVersion: '1.0.0',
         isOutdated: false,
         isSkipped: true,
       },
       {
-        name: 'unknown',
+        packageName: 'unknown',
         currentVersion: '1.0.0',
         latestVersion: undefined,
         isOutdated: false,
         isSkipped: false,
       },
       {
-        name: 'unknown-skipped',
+        packageName: 'unknown-skipped',
         currentVersion: '1.0.0',
         latestVersion: undefined,
         isOutdated: false,
@@ -375,14 +375,14 @@ describe('displaySummary', () => {
   it('should include skipped packages in total count', () => {
     const dependencies: DependencyInfo[] = [
       {
-        name: 'pkg1',
+        packageName: 'pkg1',
         currentVersion: '1.0.0',
         latestVersion: '1.0.0',
         isOutdated: false,
         isSkipped: false,
       },
       {
-        name: 'pkg2',
+        packageName: 'pkg2',
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         isOutdated: true,
