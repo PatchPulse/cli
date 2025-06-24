@@ -7,7 +7,7 @@ export interface PackageJson {
 }
 
 export interface DependencyInfo {
-  name: string;
+  packageName: string;
   currentVersion: string;
   latestVersion?: string;
   isOutdated: boolean;

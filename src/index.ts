@@ -28,11 +28,6 @@ async function main(): Promise<void> {
     const packageJson = await readPackageJson(packageJsonPath);
     const allDependencies: DependencyInfo[] = [];
 
-    // Read configuration
-    // const fileConfig = readConfigFile();
-    // const cliConfig = parseCliConfig(process.argv.slice(2));
-    // const config = mergeConfigs(fileConfig, cliConfig);
-
     const config = getConfig();
 
     const dependencyTypeLabels: Record<string, string> = {

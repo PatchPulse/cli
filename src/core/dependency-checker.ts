@@ -29,25 +29,28 @@ export async function checkDependencyVersions(
 
   for (let i = 0; i < packageNames.length; i += concurrencyLimit) {
     const batch = packageNames.slice(i, i + concurrencyLimit);
-    const batchPromises = batch.map(async name => {
-      const version = dependencies[name];
+    const batchPromises = batch.map(async packageName => {
+      const version = dependencies[packageName];
 
-      // Check if package should be skipped
-      const isSkipped = config ? shouldSkipPackage(name, config) : false;
+      const isSkipped = shouldSkipPackage({ packageName, config });
 
       let latestVersion: string | undefined;
       let isOutdated = false;
       let updateType: 'patch' | 'minor' | 'major' | undefined;
 
       if (!isSkipped) {
-        latestVersion = await getLatestVersion(name);
-        isOutdated = latestVersion
-          ? isVersionOutdated(version, latestVersion)
-          : false;
-        updateType =
-          latestVersion && isOutdated
+        latestVersion = await getLatestVersion(packageName);
+
+        // Don't try to compare versions if current version is "latest"
+        if (version === 'latest') {
+          isOutdated = false;
+          updateType = undefined;
+        } else if (latestVersion) {
+          isOutdated = isVersionOutdated(version, latestVersion);
+          updateType = isOutdated
             ? getUpdateType(version, latestVersion)
             : undefined;
+        }
       }
 
       // Update progress for each completed package
@@ -57,7 +60,7 @@ export async function checkDependencyVersions(
       );
 
       return {
-        name,
+        packageName,
         currentVersion: version,
         latestVersion,
         isOutdated,
@@ -88,6 +91,9 @@ function displayResults(dependencyInfos: DependencyInfo[]): void {
     } else if (!dep.latestVersion) {
       status = chalk.red('NOT FOUND');
       versionInfo = `${dep.currentVersion} (not found on npm registry)`;
+    } else if (dep.currentVersion === 'latest') {
+      status = chalk.cyan('LATEST TAG');
+      versionInfo = `latest → ${chalk.cyan(dep.latestVersion)} (actual latest version)`;
     } else if (dep.isOutdated) {
       const updateTypeColor = {
         major: chalk.yellow,
@@ -102,7 +108,7 @@ function displayResults(dependencyInfos: DependencyInfo[]): void {
     }
 
     console.log(
-      `${status} ${chalk.white(dep.name)} ${chalk.gray(versionInfo)}`
+      `${status} ${chalk.white(dep.packageName)} ${chalk.gray(versionInfo)}`
     );
   }
 }

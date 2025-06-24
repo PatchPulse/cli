@@ -124,36 +124,42 @@ function validateConfig(config: any): PatchPulseConfig {
  * Checks if a package should be skipped based on configuration
  * @param packageName - The name of the package to check
  * @param config - The configuration to use
+ * @param version - The version of the package to check
  * @returns True if the package should be skipped, false otherwise
  */
-export function shouldSkipPackage(
-  packageName: string,
-  config: PatchPulseConfig
-): boolean {
-  return (
-    config.skip?.some(pattern => {
-      // If the pattern contains regex special characters (other than * and ?), treat as regex
-      if (/[. +?^${}()|[\]]/.test(pattern.replace(['*', '?'].join('|'), ''))) {
-        try {
-          const regex = new RegExp(pattern);
-          return regex.test(packageName);
-        } catch {
-          return packageName.includes(pattern);
-        }
-      } else if (pattern.includes('*') || pattern.includes('?')) {
-        // Convert glob to regex
-        const regexPattern =
-          '^' +
-          pattern
-            .replace(/([.+^${}()|[\\]])/g, '\\$1') // Escape regex special chars
-            .replace(/\*/g, '.*') // * => .*
-            .replace(/\?/g, '.') + // ? => .
-          '$';
-        const regex = new RegExp(regexPattern);
+export function shouldSkipPackage({
+  packageName,
+  config = {},
+}: {
+  packageName: string;
+  config: PatchPulseConfig | undefined;
+}): boolean {
+  if (!config.skip) {
+    return false;
+  }
+
+  return config.skip.some(pattern => {
+    // If the pattern contains regex special characters (other than * and ?), treat as regex
+    if (/[. +?^${}()|[\]]/.test(pattern.replace(['*', '?'].join('|'), ''))) {
+      try {
+        const regex = new RegExp(pattern);
         return regex.test(packageName);
-      } else {
-        return packageName === pattern;
+      } catch {
+        return packageName.includes(pattern);
       }
-    }) ?? false
-  );
+    } else if (pattern.includes('*') || pattern.includes('?')) {
+      // Convert glob to regex
+      const regexPattern =
+        '^' +
+        pattern
+          .replace(/([.+^${}()|[\\]])/g, '\\$1') // Escape regex special chars
+          .replace(/\*/g, '.*') // * => .*
+          .replace(/\?/g, '.') + // ? => .
+        '$';
+      const regex = new RegExp(regexPattern);
+      return regex.test(packageName);
+    } else {
+      return packageName === pattern;
+    }
+  });
 }
