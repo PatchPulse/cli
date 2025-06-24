@@ -1,8 +1,11 @@
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
+import { type PackageManager } from './package-manager';
 
 export interface PatchPulseConfig {
   skip?: string[];
+  packageManager?: PackageManager;
+  noUpdatePrompt?: boolean;
 }
 
 const CONFIG_FILENAMES = [
@@ -54,6 +57,7 @@ export function readConfigFile(
 export function parseCliConfig(args: string[]): PatchPulseConfig {
   const config: PatchPulseConfig = {};
 
+  // Parse skip argument
   const skipIndex = args.indexOf('--skip');
   const shortSkipIndex = args.indexOf('-s');
   const skipArgIndex = skipIndex !== -1 ? skipIndex : shortSkipIndex;
@@ -68,6 +72,26 @@ export function parseCliConfig(args: string[]): PatchPulseConfig {
     }
   }
 
+  // Parse package manager argument
+  const packageManagerIndex = args.indexOf('--package-manager');
+  if (packageManagerIndex !== -1 && packageManagerIndex + 1 < args.length) {
+    const packageManagerValue = args[packageManagerIndex + 1];
+    if (!packageManagerValue.startsWith('-')) {
+      if (['npm', 'pnpm', 'yarn', 'bun'].includes(packageManagerValue)) {
+        config.packageManager = packageManagerValue as any;
+      }
+    }
+  }
+
+  // Parse no update prompt argument
+  if (args.includes('--no-update-prompt')) {
+    config.noUpdatePrompt = true;
+  }
+  // Parse update prompt argument (overrides noUpdatePrompt)
+  if (args.includes('--update-prompt')) {
+    config.noUpdatePrompt = false;
+  }
+
   return config;
 }
 
@@ -80,23 +104,37 @@ export function parseCliConfig(args: string[]): PatchPulseConfig {
 export function mergeConfigs(
   fileConfig: PatchPulseConfig | null,
   cliConfig: PatchPulseConfig
-): Required<PatchPulseConfig> {
-  const merged: Required<PatchPulseConfig> = {
+): PatchPulseConfig {
+  const merged: PatchPulseConfig = {
     skip: [],
   };
 
   // Add file config values
   if (fileConfig?.skip) {
-    merged.skip.push(...fileConfig.skip);
+    merged.skip!.push(...fileConfig.skip);
   }
 
   // Add CLI config values (merge instead of override)
   if (cliConfig.skip) {
-    merged.skip.push(...cliConfig.skip);
+    merged.skip!.push(...cliConfig.skip);
   }
 
   // Remove duplicates while preserving order
-  merged.skip = [...new Set(merged.skip)];
+  merged.skip = [...new Set(merged.skip!)];
+
+  // Handle packageManager (CLI takes precedence)
+  if (cliConfig.packageManager) {
+    merged.packageManager = cliConfig.packageManager;
+  } else if (fileConfig?.packageManager) {
+    merged.packageManager = fileConfig.packageManager;
+  }
+
+  // Handle noUpdatePrompt (CLI takes precedence)
+  if (cliConfig.noUpdatePrompt !== undefined) {
+    merged.noUpdatePrompt = cliConfig.noUpdatePrompt;
+  } else if (fileConfig?.noUpdatePrompt !== undefined) {
+    merged.noUpdatePrompt = fileConfig.noUpdatePrompt;
+  }
 
   return merged;
 }
@@ -115,6 +153,14 @@ function validateConfig(config: any): PatchPulseConfig {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (item: any) => typeof item === 'string'
     );
+  }
+
+  if (typeof config.packageManager === 'string') {
+    validated.packageManager = config.packageManager;
+  }
+
+  if (typeof config.noUpdatePrompt === 'boolean') {
+    validated.noUpdatePrompt = config.noUpdatePrompt;
   }
 
   return validated;
