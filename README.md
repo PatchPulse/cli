@@ -24,15 +24,17 @@ That's it! Patch Pulse scans your `package.json` and shows which dependencies ar
 # Check all dependencies
 npx patch-pulse
 
-# Show help
-npx patch-pulse --help
+```
 
 # Show version
+
 npx patch-pulse --version
 
 # Skip specific packages
-npx patch-pulse --skip "lodash,@types/*"
-```
+
+npx patch-pulse --skip "lodash,@types/\*"
+
+````
 
 **Checks:** `dependencies`, `devDependencies`, `peerDependencies`, `optionalDependencies`
 
@@ -48,9 +50,11 @@ Patch Pulse supports configuration files for persistent settings. Create one of 
 
 ```json
 {
-  "skip": ["lodash", "@types/*", "test-*"]
+  "skip": ["lodash", "@types/*", "test-*"],
+  "packageManager": "npm",
+  "noUpdatePrompt": false
 }
-```
+````
 
 ### Skip Patterns
 
@@ -60,13 +64,26 @@ The `skip` array supports multiple pattern types:
 - **Glob patterns**: `"@types/*"`, `"test-*"`, `"*-dev"`
 - **Regex patterns**: `".*-dev"`, `"^@angular/.*"`, `"zone\\.js"`
 
+### Package Manager
+
+The `packageManager` option allows you to override the package manager detection.
+
+- `npm`
+- `pnpm`
+- `yarn`
+- `bun`
+
+### No Update Prompt
+
+The `noUpdatePrompt` option allows you to skip the update prompt.
+
 ### CLI vs File Configuration
 
 CLI arguments override file configuration:
 
 ```bash
 # This will override any skip settings in patchpulse.config.json
-npx patch-pulse --skip "react,react-dom"
+npx patch-pulse --skip "react,react-dom" --package-manager pnpm --no-update-prompt
 ```
 
 ## Example

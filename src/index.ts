@@ -6,12 +6,18 @@ import { checkDependencyVersions } from './core/dependency-checker';
 import { getConfig } from './services/config';
 import { checkForCliUpdate } from './services/npm';
 import { readPackageJson } from './services/package';
+import {
+  detectPackageManager,
+  getPackageManagerInfo,
+  updateDependencies,
+} from './services/package-manager';
 import { type DependencyInfo } from './types';
 import { displayHelp } from './ui/display/help';
 import { displayLicense } from './ui/display/license';
 import { displaySummary } from './ui/display/summary';
 import { displayThankYouMessage } from './ui/display/thankYouMessage';
 import { displayUnknownArguments } from './ui/display/unknownArguments';
+import { displayUpdatePrompt } from './ui/display/updatePrompt';
 import { displayVersion } from './ui/display/version';
 import { getUnknownArgs } from './utils/getUnknownArgs';
 import { hasAnyFlag } from './utils/hasAnyFlag';
@@ -56,6 +62,63 @@ async function main(): Promise<void> {
 
     if (allDependencies.length > 0) {
       displaySummary(allDependencies);
+
+      // Check if we should show the update prompt
+      if (!config.noUpdatePrompt) {
+        // Detect package manager
+        const packageManager = config.packageManager
+          ? getPackageManagerInfo(config.packageManager)
+          : detectPackageManager();
+
+        // Show update prompt
+        const updateType = await displayUpdatePrompt(
+          allDependencies,
+          packageManager
+        );
+
+        if (updateType) {
+          const outdatedDeps = allDependencies.filter(
+            d => d.isOutdated && !d.isSkipped
+          );
+
+          let depsToUpdate: Array<{
+            packageName: string;
+            latestVersion: string;
+          }> = [];
+
+          if (updateType === 'patch') {
+            depsToUpdate = outdatedDeps
+              .filter(d => d.updateType === 'patch' && d.latestVersion)
+              .map(d => ({
+                packageName: d.packageName,
+                latestVersion: d.latestVersion!,
+              }));
+          } else if (updateType === 'minor') {
+            depsToUpdate = outdatedDeps
+              .filter(
+                d =>
+                  (d.updateType === 'minor' || d.updateType === 'patch') &&
+                  d.latestVersion
+              )
+              .map(d => ({
+                packageName: d.packageName,
+                latestVersion: d.latestVersion!,
+              }));
+          } else if (updateType === 'all') {
+            depsToUpdate = outdatedDeps
+              .filter(d => d.latestVersion)
+              .map(d => ({
+                packageName: d.packageName,
+                latestVersion: d.latestVersion!,
+              }));
+          }
+
+          if (depsToUpdate.length > 0) {
+            await updateDependencies(depsToUpdate, packageManager);
+          }
+        }
+      }
+
       displayThankYouMessage();
     } else {
       console.log(chalk.yellow('⚠️  No dependencies found to check'));
@@ -66,6 +129,9 @@ async function main(): Promise<void> {
     } catch {
       // Silently fail for CLI updates, i.e. don't let CLI update errors stop the main flow
     }
+
+    // Ensure the process exits properly
+    process.exit(0);
   } catch (error) {
     console.error(chalk.red(`Error: ${error}`));
     process.exit(1);
@@ -85,6 +151,9 @@ const validFlags = [
   '--license',
   '-s',
   '--skip',
+  '--package-manager',
+  '--update-prompt',
+  '--no-update-prompt',
 ];
 const unknownArgs = getUnknownArgs(args, validFlags);
 if (unknownArgs.length > 0) {
