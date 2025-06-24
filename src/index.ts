@@ -3,11 +3,7 @@
 import chalk from 'chalk';
 import { join } from 'path';
 import { checkDependencyVersions } from './core/dependency-checker';
-import {
-  mergeConfigs,
-  parseCliConfig,
-  readConfigFile,
-} from './services/config';
+import { getConfig } from './services/config';
 import { checkForCliUpdate } from './services/npm';
 import { readPackageJson } from './services/package';
 import { type DependencyInfo } from './types';
@@ -33,9 +29,11 @@ async function main(): Promise<void> {
     const allDependencies: DependencyInfo[] = [];
 
     // Read configuration
-    const fileConfig = readConfigFile();
-    const cliConfig = parseCliConfig(process.argv.slice(2));
-    const config = mergeConfigs(fileConfig, cliConfig);
+    // const fileConfig = readConfigFile();
+    // const cliConfig = parseCliConfig(process.argv.slice(2));
+    // const config = mergeConfigs(fileConfig, cliConfig);
+
+    const config = getConfig();
 
     const dependencyTypeLabels: Record<string, string> = {
       dependencies: 'Dependencies',

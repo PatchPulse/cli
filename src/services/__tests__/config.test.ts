@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  getConfig,
   mergeConfigs,
   parseCliConfig,
   readConfigFile,
@@ -23,10 +24,19 @@ describe('Configuration Service', () => {
     vi.clearAllMocks();
   });
 
+  describe('getConfig', () => {
+    it('should return the config', () => {
+      const config = getConfig();
+      expect(config).toEqual({
+        skip: [],
+      });
+    });
+  });
+
   describe('readConfigFile', () => {
     it('should return null when no config file exists', () => {
       vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(join).mockReturnValue('/test/.patchpulse.config.json');
+      vi.mocked(join).mockReturnValue('/test/patchpulse.config.json');
 
       const result = readConfigFile('/test');
 
@@ -114,7 +124,7 @@ describe('Configuration Service', () => {
       const result = mergeConfigs(fileConfig, cliConfig);
 
       expect(result).toEqual({
-        skip: ['express', 'test-*'],
+        skip: ['lodash', '@types/*', 'express', 'test-*'],
       });
     });
 
@@ -194,5 +204,9 @@ describe('Configuration Service', () => {
       expect(shouldSkipPackage('test-package', config)).toBe(true);
       expect(shouldSkipPackage('test-package-extra', config)).toBe(false);
     });
+  });
+
+  it('should handle no defined config skip parameter', () => {
+    expect(shouldSkipPackage('lodash', {})).toBe(false);
   });
 });

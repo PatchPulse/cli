@@ -12,7 +12,18 @@ const CONFIG_FILENAMES = [
 ];
 
 /**
- * Reads configuration from .patchpulse.config.json file
+ * Get the config from the config file and merged with the CLI config
+ * @param argv - The command line arguments
+ * @returns The merged configuration
+ */
+export function getConfig() {
+  const fileConfig = readConfigFile();
+  const cliConfig = parseCliConfig(process.argv.slice(2));
+  return mergeConfigs(fileConfig, cliConfig);
+}
+
+/**
+ * Reads configuration from patchpulse.config.json file
  * @param cwd - The current working directory
  * @returns The configuration from the file
  */
@@ -61,7 +72,7 @@ export function parseCliConfig(args: string[]): PatchPulseConfig {
 }
 
 /**
- * Merges file config and CLI config, with CLI taking precedence
+ * Merges file config and CLI config, combining skip arrays from both sources
  * @param fileConfig - The configuration from the file
  * @param cliConfig - The configuration from the CLI
  * @returns The merged configuration
@@ -79,10 +90,13 @@ export function mergeConfigs(
     merged.skip.push(...fileConfig.skip);
   }
 
-  // CLI config overrides file config
+  // Add CLI config values (merge instead of override)
   if (cliConfig.skip) {
-    merged.skip = cliConfig.skip;
+    merged.skip.push(...cliConfig.skip);
   }
+
+  // Remove duplicates while preserving order
+  merged.skip = [...new Set(merged.skip)];
 
   return merged;
 }

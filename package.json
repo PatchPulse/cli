@@ -70,5 +70,9 @@
     "tsx": "4.20.3",
     "typescript": "5.8.3",
     "vitest": "3.2.4"
+  },
+  "optionalDependencies": {
+    "node": "20.x",
+    "node-semver": "latest"
   }
 }

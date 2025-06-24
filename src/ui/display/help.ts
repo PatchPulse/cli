@@ -25,7 +25,7 @@ ${chalk.cyan.bold.underline('🔧 Configuration Options:')}
   ${chalk.white('-s, --skip <packages>')}    ${chalk.gray('Skip packages (supports exact names and patterns)')}
 
 ${chalk.cyan.bold.underline('📁 Configuration File:')}
-  Create a \`.patchpulse.config.json\` file in your project root:
+  Create a \`patchpulse.config.json\` file in your project root:
   ${chalk.gray('{')}
     ${chalk.gray('"skip": ["lodash", "@types/*", "test-*"]')}
   ${chalk.gray('}')}
