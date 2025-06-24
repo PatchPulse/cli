@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  getConfig,
   mergeConfigs,
   parseCliConfig,
   readConfigFile,
@@ -23,10 +24,17 @@ describe('Configuration Service', () => {
     vi.clearAllMocks();
   });
 
+  describe('getConfig', () => {
+    it('should return the config', () => {
+      const config = getConfig();
+      expect(config).toEqual({ skip: [] });
+    });
+  });
+
   describe('readConfigFile', () => {
     it('should return null when no config file exists', () => {
       vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(join).mockReturnValue('/test/.patchpulse.config.json');
+      vi.mocked(join).mockReturnValue('/test/patchpulse.config.json');
 
       const result = readConfigFile('/test');
 
@@ -114,7 +122,7 @@ describe('Configuration Service', () => {
       const result = mergeConfigs(fileConfig, cliConfig);
 
       expect(result).toEqual({
-        skip: ['express', 'test-*'],
+        skip: ['lodash', '@types/*', 'express', 'test-*'],
       });
     });
 
@@ -149,9 +157,9 @@ describe('Configuration Service', () => {
         skip: ['lodash', 'express'],
       };
 
-      expect(shouldSkipPackage('lodash', config)).toBe(true);
-      expect(shouldSkipPackage('express', config)).toBe(true);
-      expect(shouldSkipPackage('chalk', config)).toBe(false);
+      expect(shouldSkipPackage({ packageName: 'lodash', config })).toBe(true);
+      expect(shouldSkipPackage({ packageName: 'express', config })).toBe(true);
+      expect(shouldSkipPackage({ packageName: 'chalk', config })).toBe(false);
     });
 
     it('should skip packages matching patterns', () => {
@@ -159,12 +167,25 @@ describe('Configuration Service', () => {
         skip: ['@types/*', 'test-*'],
       };
 
-      expect(shouldSkipPackage('@types/node', config)).toBe(true);
-      expect(shouldSkipPackage('test-utils', config)).toBe(true);
-      expect(shouldSkipPackage('@typescript-eslint/parser', config)).toBe(
-        false
-      );
-      expect(shouldSkipPackage('chalk', config)).toBe(false);
+      expect(
+        shouldSkipPackage({
+          packageName: '@types/node',
+          config,
+        })
+      ).toBe(true);
+      expect(
+        shouldSkipPackage({
+          packageName: 'test-utils',
+          config,
+        })
+      ).toBe(true);
+      expect(
+        shouldSkipPackage({
+          packageName: '@typescript-eslint/parser',
+          config,
+        })
+      ).toBe(false);
+      expect(shouldSkipPackage({ packageName: 'chalk', config })).toBe(false);
     });
 
     it('should handle invalid regex patterns gracefully', () => {
@@ -172,7 +193,12 @@ describe('Configuration Service', () => {
         skip: ['[invalid-regex'],
       };
 
-      expect(shouldSkipPackage('test-package', config)).toBe(false);
+      expect(
+        shouldSkipPackage({
+          packageName: 'test-package',
+          config,
+        })
+      ).toBe(false);
     });
 
     it('should check both exact matches and patterns', () => {
@@ -180,9 +206,14 @@ describe('Configuration Service', () => {
         skip: ['lodash', '@types/*'],
       };
 
-      expect(shouldSkipPackage('lodash', config)).toBe(true);
-      expect(shouldSkipPackage('@types/node', config)).toBe(true);
-      expect(shouldSkipPackage('chalk', config)).toBe(false);
+      expect(shouldSkipPackage({ packageName: 'lodash', config })).toBe(true);
+      expect(
+        shouldSkipPackage({
+          packageName: '@types/node',
+          config,
+        })
+      ).toBe(true);
+      expect(shouldSkipPackage({ packageName: 'chalk', config })).toBe(false);
     });
 
     it('should treat patterns without regex chars as exact matches', () => {
@@ -190,9 +221,25 @@ describe('Configuration Service', () => {
         skip: ['lodash', 'test-package'],
       };
 
-      expect(shouldSkipPackage('lodash', config)).toBe(true);
-      expect(shouldSkipPackage('test-package', config)).toBe(true);
-      expect(shouldSkipPackage('test-package-extra', config)).toBe(false);
+      expect(shouldSkipPackage({ packageName: 'lodash', config })).toBe(true);
+      expect(
+        shouldSkipPackage({
+          packageName: 'test-package',
+          config,
+        })
+      ).toBe(true);
+      expect(
+        shouldSkipPackage({
+          packageName: 'test-package-extra',
+          config,
+        })
+      ).toBe(false);
     });
+  });
+
+  it('should handle no defined config skip parameter', () => {
+    expect(shouldSkipPackage({ packageName: 'lodash', config: {} })).toBe(
+      false
+    );
   });
 });
