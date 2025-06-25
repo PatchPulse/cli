@@ -2,7 +2,7 @@ import chalk from 'chalk';
 
 import { PatchPulseConfig, shouldSkipPackage } from '../services/config';
 import { getLatestVersion } from '../services/npm';
-import { type DependencyInfo } from '../types';
+import { UpdateType, type DependencyInfo } from '../types';
 import { ProgressSpinner } from '../ui/progress';
 import { getUpdateType } from '../utils/getUpdateType';
 import { isVersionOutdated } from '../utils/isVersionOutdated';
@@ -36,7 +36,7 @@ export async function checkDependencyVersions(
 
       let latestVersion: string | undefined;
       let isOutdated = false;
-      let updateType: 'patch' | 'minor' | 'major' | undefined;
+      let updateType: UpdateType | undefined;
 
       if (!isSkipped) {
         latestVersion = await getLatestVersion(packageName);

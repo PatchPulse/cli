@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import { UpdateType } from '../types';
 import { parseVersion } from './parseVersion';
 
 interface GetUpdateTypeArgs {
@@ -19,7 +20,7 @@ interface GetUpdateTypeArgs {
 export function getUpdateType({
   current,
   latest,
-}: GetUpdateTypeArgs): 'patch' | 'minor' | 'major' {
+}: GetUpdateTypeArgs): UpdateType {
   try {
     const currentVersion = parseVersion(current);
     const latestVersion = parseVersion(latest);

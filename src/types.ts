@@ -1,5 +1,7 @@
 export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
 
+export type UpdateType = 'patch' | 'minor' | 'major';
+
 export interface PackageJson {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
@@ -13,7 +15,7 @@ export interface DependencyInfo {
   currentVersion: string;
   latestVersion?: string;
   isOutdated: boolean;
-  updateType?: 'patch' | 'minor' | 'major';
+  updateType?: UpdateType;
   isSkipped?: boolean;
   category?: string;
 }
@@ -26,7 +28,7 @@ export interface UpdateableDependency {
   packageName: string;
   currentVersion: string;
   latestVersion: string;
-  updateType: 'patch' | 'minor' | 'major';
+  updateType: UpdateType;
   category: string;
 }
 
