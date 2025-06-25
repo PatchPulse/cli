@@ -6,7 +6,7 @@ Check for outdated npm dependencies in your `package.json` file.
 [![npm Version](https://img.shields.io/npm/v/patch-pulse.svg)](https://npmjs.com/package/patch-pulse)
 [![npm Downloads](https://img.shields.io/npm/dm/patch-pulse.svg)](https://npmjs.com/package/patch-pulse)
 [![CI/CD](https://github.com/PatchPulse/cli/actions/workflows/ci.yml/badge.svg)](https://github.com/PatchPulse/cli/actions/workflows/ci.yml)
-![GitHub stars](https://img.shields.io/github/stars/PatchPulse/cli.svg?style=social)
+[![GitHub stars](https://img.shields.io/github/stars/PatchPulse/cli.svg?style=social)](https://github.com/PatchPulse/cli/stargazers)
 
 ![Patch Pulse Banner](assets/banner.png)
 
