@@ -23,12 +23,6 @@ That's it! Patch Pulse scans your `package.json` and shows which dependencies ar
 ```bash
 # Check all dependencies
 npx patch-pulse
-
-# Show version
-npx patch-pulse --version
-
-# Skip specific packages
-npx patch-pulse --skip "lodash,@types/\*"
 ```
 
 **Checks:** `dependencies`, `devDependencies`, `peerDependencies`, `optionalDependencies`
@@ -77,7 +71,7 @@ The `noUpdatePrompt` option allows you to skip the update prompt.
 CLI arguments override file configuration:
 
 ```bash
-# This will override any skip settings in patchpulse.config.json
+# This will override any settings in patchpulse.config.json
 npx patch-pulse --skip "react,react-dom" --package-manager pnpm --no-update-prompt
 ```
 
