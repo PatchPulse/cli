@@ -13,6 +13,7 @@ export interface DependencyInfo {
   isOutdated: boolean;
   updateType?: 'patch' | 'minor' | 'major';
   isSkipped?: boolean;
+  category?: string;
 }
 
 export interface NpmPackageInfo {
