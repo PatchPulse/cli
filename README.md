@@ -24,17 +24,12 @@ That's it! Patch Pulse scans your `package.json` and shows which dependencies ar
 # Check all dependencies
 npx patch-pulse
 
-```
-
 # Show version
-
 npx patch-pulse --version
 
 # Skip specific packages
-
 npx patch-pulse --skip "lodash,@types/\*"
-
-````
+```
 
 **Checks:** `dependencies`, `devDependencies`, `peerDependencies`, `optionalDependencies`
 
@@ -54,7 +49,7 @@ Patch Pulse supports configuration files for persistent settings. Create one of 
   "packageManager": "npm",
   "noUpdatePrompt": false
 }
-````
+```
 
 ### Skip Patterns
 
