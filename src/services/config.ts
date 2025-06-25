@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
-import { type PackageManager } from './package-manager';
+import { PACKAGE_MANAGERS } from '../constant';
+import { type PackageManager } from '../types';
 
 export interface PatchPulseConfig {
   skip?: string[];
@@ -77,8 +78,9 @@ export function parseCliConfig(args: string[]): PatchPulseConfig {
   if (packageManagerIndex !== -1 && packageManagerIndex + 1 < args.length) {
     const packageManagerValue = args[packageManagerIndex + 1];
     if (!packageManagerValue.startsWith('-')) {
-      if (['npm', 'pnpm', 'yarn', 'bun'].includes(packageManagerValue)) {
-        config.packageManager = packageManagerValue as any;
+      const typeSafePackageManager = packageManagerValue as PackageManager;
+      if (PACKAGE_MANAGERS.includes(typeSafePackageManager)) {
+        config.packageManager = typeSafePackageManager;
       }
     }
   }

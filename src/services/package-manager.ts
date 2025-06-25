@@ -2,9 +2,8 @@ import chalk from 'chalk';
 import { spawn } from 'child_process';
 import { existsSync } from 'fs';
 import { join } from 'path';
+import { type PackageManager, type UpdateableDependency } from '../types';
 import { pluralize } from '../utils/pluralize';
-
-export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
 
 export interface PackageManagerInfo {
   name: PackageManager;
@@ -103,30 +102,26 @@ export function runPackageManagerCommand(
 /**
  * Updates dependencies based on update type
  * @param dependencies - Array of dependencies to update
- * @param updateType - The type of update to perform ('patch', 'minor', 'all')
  * @param packageManager - The package manager to use
  * @returns Promise that resolves when all updates are complete
  */
-export async function updateDependencies(
-  dependencies: Array<{
-    packageName: string;
-    currentVersion: string;
-    latestVersion: string;
-    updateType: 'patch' | 'minor' | 'major';
-    category: string;
-  }>,
-  packageManager: PackageManagerInfo
-): Promise<void> {
+export async function updateDependencies({
+  dependencies,
+  packageManager,
+}: {
+  dependencies: UpdateableDependency[];
+  packageManager: PackageManagerInfo;
+}): Promise<void> {
   if (dependencies.length === 0) {
     console.log(chalk.yellow('No dependencies to update'));
     return;
   }
 
-  const dependencyWord = pluralize(
-    dependencies.length,
-    'dependency',
-    'dependencies'
-  );
+  const dependencyWord = pluralize({
+    count: dependencies.length,
+    singular: 'dependency',
+    plural: 'dependencies',
+  });
 
   console.log(
     chalk.cyan(

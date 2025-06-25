@@ -1,3 +1,5 @@
+export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
+
 export interface PackageJson {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
@@ -14,6 +16,18 @@ export interface DependencyInfo {
   updateType?: 'patch' | 'minor' | 'major';
   isSkipped?: boolean;
   category?: string;
+}
+
+/**
+ * A dependency that is guaranteed to have latestVersion and updateType fields
+ * Used for dependencies that have been filtered and validated for updates
+ */
+export interface UpdateableDependency {
+  packageName: string;
+  currentVersion: string;
+  latestVersion: string;
+  updateType: 'patch' | 'minor' | 'major';
+  category: string;
 }
 
 export interface NpmPackageInfo {

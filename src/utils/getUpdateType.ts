@@ -1,16 +1,25 @@
 import chalk from 'chalk';
 import { parseVersion } from './parseVersion';
 
+interface GetUpdateTypeArgs {
+  /**
+   * The current version string
+   */
+  current: string;
+  /**
+   * The latest version string
+   */
+  latest: string;
+}
+
 /**
  * Determines the type of update required based on the current and latest versions
- * @param current - The current version string
- * @param latest - The latest version string
  * @returns The type of update required ('patch', 'minor', or 'major')
  */
-export function getUpdateType(
-  current: string,
-  latest: string
-): 'patch' | 'minor' | 'major' {
+export function getUpdateType({
+  current,
+  latest,
+}: GetUpdateTypeArgs): 'patch' | 'minor' | 'major' {
   try {
     const currentVersion = parseVersion(current);
     const latestVersion = parseVersion(latest);
@@ -25,9 +34,13 @@ export function getUpdateType(
       return 'patch';
     }
     return 'patch';
-  } catch (error) {
+  } catch {
     // Handle invalid version formats gracefully
-    console.warn(chalk.yellow(`⚠️  Invalid version format: ${error}`));
-    return 'patch'; // Default fallback
+    console.warn(
+      chalk.yellow(
+        `⚠️  Invalid version format: ${current} or ${latest}. Defaulting to patch update.`
+      )
+    );
+    return 'patch';
   }
 }

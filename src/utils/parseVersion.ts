@@ -12,7 +12,9 @@ export function parseVersion(version: string): VersionInfo {
 
   if (!match) {
     // Instead of returning zeros, throw an error for invalid versions
-    throw new Error(`Invalid version format: ${version}`);
+    throw new Error(
+      `Invalid version format: ${version}. Expected format: x.y.z`
+    );
   }
 
   return {

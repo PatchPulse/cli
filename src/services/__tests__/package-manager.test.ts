@@ -6,12 +6,10 @@ import {
   getPackageManagerInfo,
 } from '../package-manager';
 
-// Mock fs module
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
 }));
 
-// Mock path module
 vi.mock('path', () => ({
   join: vi.fn(),
 }));
@@ -26,12 +24,12 @@ describe('package-manager', () => {
       const mockExistsSync = vi.mocked(existsSync);
       const mockJoin = vi.mocked(join);
 
-      mockJoin.mockImplementation((dir: string, file: string) => {
-        return `${dir}/${file}`;
-      });
-      mockExistsSync.mockImplementation((path: any) => {
-        return path === '/test/package-lock.json';
-      });
+      mockJoin.mockImplementation(
+        (dir: string, file: string) => `${dir}/${file}`
+      );
+      mockExistsSync.mockImplementation(
+        path => path === '/test/package-lock.json'
+      );
 
       const result = detectPackageManager('/test');
 
@@ -46,12 +44,12 @@ describe('package-manager', () => {
       const mockExistsSync = vi.mocked(existsSync);
       const mockJoin = vi.mocked(join);
 
-      mockJoin.mockImplementation((dir: string, file: string) => {
-        return `${dir}/${file}`;
-      });
-      mockExistsSync.mockImplementation((path: any) => {
-        return path === '/test/pnpm-lock.yaml';
-      });
+      mockJoin.mockImplementation(
+        (dir: string, file: string) => `${dir}/${file}`
+      );
+      mockExistsSync.mockImplementation(
+        path => path === '/test/pnpm-lock.yaml'
+      );
 
       const result = detectPackageManager('/test');
 
@@ -66,12 +64,10 @@ describe('package-manager', () => {
       const mockExistsSync = vi.mocked(existsSync);
       const mockJoin = vi.mocked(join);
 
-      mockJoin.mockImplementation((dir: string, file: string) => {
-        return `${dir}/${file}`;
-      });
-      mockExistsSync.mockImplementation((path: any) => {
-        return path === '/test/yarn.lock';
-      });
+      mockJoin.mockImplementation(
+        (dir: string, file: string) => `${dir}/${file}`
+      );
+      mockExistsSync.mockImplementation(path => path === '/test/yarn.lock');
 
       const result = detectPackageManager('/test');
 
@@ -86,12 +82,10 @@ describe('package-manager', () => {
       const mockExistsSync = vi.mocked(existsSync);
       const mockJoin = vi.mocked(join);
 
-      mockJoin.mockImplementation((dir: string, file: string) => {
-        return `${dir}/${file}`;
-      });
-      mockExistsSync.mockImplementation((path: any) => {
-        return path === '/test/bun.lockb';
-      });
+      mockJoin.mockImplementation(
+        (dir: string, file: string) => `${dir}/${file}`
+      );
+      mockExistsSync.mockImplementation(path => path === '/test/bun.lockb');
 
       const result = detectPackageManager('/test');
 

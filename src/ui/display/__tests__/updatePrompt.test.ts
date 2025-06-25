@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { type PackageManagerInfo } from '../../../services/package-manager';
 import { type DependencyInfo } from '../../../types';
 import { displayUpdatePrompt } from '../updatePrompt';
 
@@ -35,13 +34,7 @@ describe('updatePrompt', () => {
       },
     ];
 
-    const packageManager: PackageManagerInfo = {
-      name: 'npm',
-      lockFiles: ['package-lock.json'],
-      addCommand: 'npm install',
-    };
-
-    const result = await displayUpdatePrompt(dependencies, packageManager);
+    const result = await displayUpdatePrompt(dependencies);
     expect(result).toBeNull();
   });
 
@@ -56,12 +49,6 @@ describe('updatePrompt', () => {
       },
     ];
 
-    const packageManager: PackageManagerInfo = {
-      name: 'npm',
-      lockFiles: ['package-lock.json'],
-      addCommand: 'npm install',
-    };
-
     // Mock the stdin.on to capture the callback and simulate key press
     let keyPressCallback: ((key: string) => void) | undefined;
     mockStdin.on.mockImplementation((event, callback) => {
@@ -71,7 +58,7 @@ describe('updatePrompt', () => {
     });
 
     // Start the promise
-    const promise = displayUpdatePrompt(dependencies, packageManager);
+    const promise = displayUpdatePrompt(dependencies);
 
     // Wait a bit for the function to set up, then simulate pressing 'p' key
     await new Promise(resolve => setTimeout(resolve, 10));

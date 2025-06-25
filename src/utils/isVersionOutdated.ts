@@ -1,38 +1,36 @@
-import chalk from 'chalk';
 import { parseVersion } from './parseVersion';
+
+interface IsVersionOutdatedArgs {
+  /**
+   * The current version string
+   */
+  current: string;
+  /**
+   * The latest version string to compare against
+   */
+  latest: string;
+}
 
 /**
  * Checks if the current version is outdated compared to the latest version
- * @param current - The current version string
- * @param latest - The latest version string
  * @returns True if the current version is outdated, false otherwise
  */
-export function isVersionOutdated(current: string, latest: string): boolean {
+export function isVersionOutdated({
+  current,
+  latest,
+}: IsVersionOutdatedArgs): boolean {
   try {
     const currentVersion = parseVersion(current);
     const latestVersion = parseVersion(latest);
 
-    // Compare major versions first
-    if (latestVersion.major > currentVersion.major) {
-      return true;
-    }
-    if (latestVersion.major < currentVersion.major) {
-      return false;
-    }
-
-    // If major versions are equal, compare minor versions
-    if (latestVersion.minor > currentVersion.minor) {
-      return true;
-    }
-    if (latestVersion.minor < currentVersion.minor) {
-      return false;
-    }
-
-    // If minor versions are equal, compare patch versions
+    // Compare major, minor, and patch versions
+    if (latestVersion.major > currentVersion.major) return true;
+    if (latestVersion.major < currentVersion.major) return false;
+    if (latestVersion.minor > currentVersion.minor) return true;
+    if (latestVersion.minor < currentVersion.minor) return false;
     return latestVersion.patch > currentVersion.patch;
-  } catch (error) {
-    // Handle invalid version formats gracefully
-    console.warn(chalk.yellow(`⚠️  Invalid version format: ${error}`));
-    return false; // Default to not outdated if we can't parse
+  } catch {
+    // If version parsing fails, assume it's not outdated
+    return false;
   }
 }

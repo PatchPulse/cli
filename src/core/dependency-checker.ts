@@ -47,9 +47,12 @@ export async function checkDependencyVersions(
           isOutdated = false;
           updateType = undefined;
         } else if (latestVersion) {
-          isOutdated = isVersionOutdated(version, latestVersion);
+          isOutdated = isVersionOutdated({
+            current: version,
+            latest: latestVersion,
+          });
           updateType = isOutdated
-            ? getUpdateType(version, latestVersion)
+            ? getUpdateType({ current: version, latest: latestVersion })
             : undefined;
         }
       }

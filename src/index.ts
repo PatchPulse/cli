@@ -11,7 +11,7 @@ import {
   getPackageManagerInfo,
   updateDependencies,
 } from './services/package-manager';
-import { type DependencyInfo } from './types';
+import { type DependencyInfo, type UpdateableDependency } from './types';
 import { displayHelp } from './ui/display/help';
 import { displayLicense } from './ui/display/license';
 import { displaySummary } from './ui/display/summary';
@@ -71,23 +71,14 @@ async function main(): Promise<void> {
           : detectPackageManager();
 
         // Show update prompt
-        const updateType = await displayUpdatePrompt(
-          allDependencies,
-          packageManager
-        );
+        const updateType = await displayUpdatePrompt(allDependencies);
 
         if (updateType) {
           const outdatedDeps = allDependencies.filter(
             d => d.isOutdated && !d.isSkipped
           );
 
-          let depsToUpdate: Array<{
-            packageName: string;
-            currentVersion: string;
-            latestVersion: string;
-            updateType: 'patch' | 'minor' | 'major';
-            category: string;
-          }> = [];
+          let depsToUpdate: UpdateableDependency[] = [];
 
           if (updateType === 'patch') {
             depsToUpdate = outdatedDeps
@@ -126,7 +117,10 @@ async function main(): Promise<void> {
           }
 
           if (depsToUpdate.length > 0) {
-            await updateDependencies(depsToUpdate, packageManager);
+            await updateDependencies({
+              dependencies: depsToUpdate,
+              packageManager,
+            });
           }
         }
       }
@@ -167,23 +161,23 @@ const validFlags = [
   '--update-prompt',
   '--no-update-prompt',
 ];
-const unknownArgs = getUnknownArgs(args, validFlags);
+const unknownArgs = getUnknownArgs({ args, validFlags });
 if (unknownArgs.length > 0) {
   displayUnknownArguments(unknownArgs);
   process.exit(1);
 }
 
-if (hasAnyFlag(args, ['--help', '-h', '--info', '-i'])) {
+if (hasAnyFlag({ args, flags: ['--help', '-h', '--info', '-i'] })) {
   displayHelp();
   process.exit(0);
 }
 
-if (hasAnyFlag(args, ['--version', '-v'])) {
+if (hasAnyFlag({ args, flags: ['--version', '-v'] })) {
   displayVersion();
   process.exit(0);
 }
 
-if (hasAnyFlag(args, ['--license', '-l'])) {
+if (hasAnyFlag({ args, flags: ['--license', '-l'] })) {
   displayLicense();
   process.exit(0);
 }

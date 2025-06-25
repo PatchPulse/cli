@@ -4,7 +4,13 @@
  * @param validFlags - The list of valid flags
  * @returns Array of unknown arguments (excluding those that come after skip flags)
  */
-export function getUnknownArgs(args: string[], validFlags: string[]): string[] {
+export function getUnknownArgs({
+  args,
+  validFlags,
+}: {
+  args: string[];
+  validFlags: string[];
+}): string[] {
   const unknownArgs: string[] = [];
   let skipMode = false;
 

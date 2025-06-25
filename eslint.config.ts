@@ -45,6 +45,7 @@ export default [
       'no-console': 'off', // Allow console.log for CLI output
       'prefer-const': 'error',
       'no-var': 'error',
+      'func-style': ['error', 'declaration', { allowArrowFunctions: false }],
 
       // Code quality (non-formatting - formatting handled by Prettier)
       eqeqeq: ['error', 'always'],
@@ -54,7 +55,5 @@ export default [
       'no-script-url': 'error',
     },
   },
-  {
-    ignores: ['dist/', 'lib/', 'node_modules/', '*.js', '*.d.ts', 'scripts/'],
-  },
+  { ignores: ['dist/', 'lib/', 'node_modules/', '*.js', '*.d.ts', 'scripts/'] },
 ];

@@ -1,14 +1,51 @@
 import chalk from 'chalk';
-import { type PackageManagerInfo } from '../../services/package-manager';
 import { type DependencyInfo } from '../../types';
 import { pluralize } from '../../utils/pluralize';
 import { displayHelp } from './help';
 import { displayVersion } from './version';
 
+interface UpdateOption {
+  packageName: string;
+  latestVersion: string;
+}
+
 export interface UpdateOptions {
-  patch: Array<{ packageName: string; latestVersion: string }>;
-  minor: Array<{ packageName: string; latestVersion: string }>;
-  all: Array<{ packageName: string; latestVersion: string }>;
+  patch: UpdateOption[];
+  minor: UpdateOption[];
+  all: UpdateOption[];
+}
+
+/**
+ * Sets up raw mode for single key press detection
+ * @param stdin - The stdin stream
+ * @param _wasRaw - The original raw mode state (unused but kept for consistency)
+ * @param _wasPaused - The original paused state (unused but kept for consistency)
+ */
+function setupRawMode(stdin: typeof process.stdin) {
+  stdin.setRawMode(true);
+  stdin.resume();
+  stdin.setEncoding('utf8');
+}
+
+/**
+ * Restores the original terminal settings
+ * @param stdin - The stdin stream
+ * @param wasRaw - The original raw mode state
+ * @param wasPaused - The original paused state
+ */
+function restoreTerminalSettings({
+  stdin,
+  wasRaw,
+  wasPaused,
+}: {
+  stdin: typeof process.stdin;
+  wasRaw: boolean;
+  wasPaused: boolean;
+}) {
+  stdin.setRawMode(wasRaw);
+  if (wasPaused) {
+    stdin.pause();
+  }
 }
 
 /**
@@ -18,8 +55,7 @@ export interface UpdateOptions {
  * @returns Promise that resolves with the selected update type or null if cancelled
  */
 export function displayUpdatePrompt(
-  dependencies: DependencyInfo[],
-  packageManager: PackageManagerInfo
+  dependencies: DependencyInfo[]
 ): Promise<'patch' | 'minor' | 'all' | null> {
   return new Promise(resolve => {
     const outdatedDeps = dependencies.filter(d => d.isOutdated && !d.isSkipped);
@@ -32,7 +68,6 @@ export function displayUpdatePrompt(
     const updateOptions = categorizeUpdates(outdatedDeps);
 
     function showOptions() {
-      // Count how many different types of updates we have
       const hasPatch = updateOptions.patch.length > 0;
       const hasMinor = updateOptions.minor.length > 0;
       const hasMajor =
@@ -45,12 +80,20 @@ export function displayUpdatePrompt(
       // Show individual options
       if (updateOptions.patch.length > 0) {
         console.log(
-          `  ${chalk.cyan('p')} - Update ${pluralize(updateOptions.patch.length, 'outdated patch dependency', 'outdated patch dependencies')}`
+          `  ${chalk.cyan('p')} - Update ${pluralize({
+            count: updateOptions.patch.length,
+            singular: 'outdated patch dependency',
+            plural: 'outdated patch dependencies',
+          })}`
         );
       }
       if (updateOptions.minor.length > 0) {
         console.log(
-          `  ${chalk.cyan('m')} - Update ${pluralize(updateOptions.minor.length, 'outdated minor dependency', 'outdated minor dependencies')}`
+          `  ${chalk.cyan('m')} - Update ${pluralize({
+            count: updateOptions.minor.length,
+            singular: 'outdated minor dependency',
+            plural: 'outdated minor dependencies',
+          })}`
         );
       }
 
@@ -61,8 +104,16 @@ export function displayUpdatePrompt(
       ) {
         const allText =
           updateOptions.all.length === 1
-            ? `Update ${updateOptions.all.length} ${pluralize(updateOptions.all.length, 'outdated dependency', 'outdated dependencies')}`
-            : `Update all ${updateOptions.all.length} ${pluralize(updateOptions.all.length, 'outdated dependency', 'outdated dependencies')}`;
+            ? `Update ${updateOptions.all.length} ${pluralize({
+                count: updateOptions.all.length,
+                singular: 'outdated dependency',
+                plural: 'outdated dependencies',
+              })}`
+            : `Update all ${updateOptions.all.length} ${pluralize({
+                count: updateOptions.all.length,
+                singular: 'outdated dependency',
+                plural: 'outdated dependencies',
+              })}`;
 
         console.log(`  ${chalk.cyan('a')} - ${allText}`);
       }
@@ -85,11 +136,9 @@ export function displayUpdatePrompt(
     const wasPaused = stdin.isPaused();
 
     // Set up raw mode
-    stdin.setRawMode(true);
-    stdin.resume();
-    stdin.setEncoding('utf8');
+    setupRawMode(stdin);
 
-    const handleKeyPress = (key: string) => {
+    function handleKeyPress(key: string) {
       const choice = key.toLowerCase();
 
       switch (choice) {
@@ -128,9 +177,7 @@ export function displayUpdatePrompt(
           // Re-display the options and continue
           showOptions();
           // Re-setup the key listener
-          stdin.setRawMode(true);
-          stdin.resume();
-          stdin.setEncoding('utf8');
+          setupRawMode(stdin);
           stdin.on('data', handleKeyPress);
           break;
         case 'v':
@@ -140,9 +187,7 @@ export function displayUpdatePrompt(
           // Re-display the options and continue
           showOptions();
           // Re-setup the key listener
-          stdin.setRawMode(true);
-          stdin.resume();
-          stdin.setEncoding('utf8');
+          setupRawMode(stdin);
           stdin.on('data', handleKeyPress);
           break;
         case '\u0003': // Ctrl+C
@@ -153,15 +198,12 @@ export function displayUpdatePrompt(
           // Ignore other keys
           break;
       }
-    };
+    }
 
-    const cleanup = () => {
-      stdin.setRawMode(wasRaw);
-      if (wasPaused) {
-        stdin.pause();
-      }
+    function cleanup() {
+      restoreTerminalSettings({ stdin, wasRaw, wasPaused });
       stdin.removeListener('data', handleKeyPress);
-    };
+    }
 
     stdin.on('data', handleKeyPress);
   });
@@ -173,9 +215,9 @@ export function displayUpdatePrompt(
  * @returns Object with categorized dependencies
  */
 function categorizeUpdates(dependencies: DependencyInfo[]): UpdateOptions {
-  const patch: Array<{ packageName: string; latestVersion: string }> = [];
-  const minor: Array<{ packageName: string; latestVersion: string }> = [];
-  const all: Array<{ packageName: string; latestVersion: string }> = [];
+  const patch: UpdateOption[] = [];
+  const minor: UpdateOption[] = [];
+  const all: UpdateOption[] = [];
 
   for (const dep of dependencies) {
     if (!dep.latestVersion) continue;
@@ -192,7 +234,6 @@ function categorizeUpdates(dependencies: DependencyInfo[]): UpdateOptions {
     } else if (dep.updateType === 'minor') {
       minor.push(updateEntry);
     }
-    // Major updates are not included in patch or minor categories
   }
 
   return { patch, minor, all };

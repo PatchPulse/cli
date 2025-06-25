@@ -4,7 +4,13 @@
  * @param flags - The flags to check for
  * @returns True if any of the flags are present in args, false otherwise
  */
-export function hasAnyFlag(args: string[], flags: string[]): boolean {
+export function hasAnyFlag({
+  args,
+  flags,
+}: {
+  args: string[];
+  flags: string[];
+}): boolean {
   const flagSet = new Set(flags);
   return args.some(arg => flagSet.has(arg));
 }
