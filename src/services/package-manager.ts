@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { spawn } from 'child_process';
 import { existsSync } from 'fs';
 import { join } from 'path';
+import { pluralize } from '../utils/pluralize';
 
 export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
 
@@ -107,7 +108,13 @@ export function runPackageManagerCommand(
  * @returns Promise that resolves when all updates are complete
  */
 export async function updateDependencies(
-  dependencies: Array<{ packageName: string; latestVersion: string }>,
+  dependencies: Array<{
+    packageName: string;
+    currentVersion: string;
+    latestVersion: string;
+    updateType: 'patch' | 'minor' | 'major';
+    category: string;
+  }>,
   packageManager: PackageManagerInfo
 ): Promise<void> {
   if (dependencies.length === 0) {
@@ -115,11 +122,51 @@ export async function updateDependencies(
     return;
   }
 
+  const dependencyWord = pluralize(
+    dependencies.length,
+    'dependency',
+    'dependencies'
+  );
+
   console.log(
     chalk.cyan(
-      `\n🔄 Updating ${dependencies.length} dependencies using ${packageManager.name}...`
+      `\n🔄 Updating ${dependencies.length} ${dependencyWord} using ${packageManager.name}...`
     )
   );
+
+  // Group dependencies by category
+  const groupedDeps = dependencies.reduce(
+    (groups, dep) => {
+      const category = dep.category || 'Dependencies';
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+      groups[category].push(dep);
+      return groups;
+    },
+    {} as Record<string, typeof dependencies>
+  );
+
+  // Show version changes for each dependency grouped by category
+  for (const [category, deps] of Object.entries(groupedDeps)) {
+    if (deps.length > 0) {
+      console.log(chalk.gray(`${category}:`));
+
+      for (const dep of deps) {
+        const updateTypeColor = {
+          major: chalk.yellow,
+          minor: chalk.magenta,
+          patch: chalk.blue,
+        }[dep.updateType];
+        const updateTypeLabel = updateTypeColor(`[${dep.updateType}]`);
+        console.log(
+          chalk.gray(
+            `   ${dep.packageName}: ${dep.currentVersion} → ${dep.latestVersion} ${updateTypeLabel}`
+          )
+        );
+      }
+    }
+  }
 
   try {
     // Build the arguments array for the package manager
@@ -147,7 +194,7 @@ export async function updateDependencies(
 
     console.log(
       chalk.green(
-        `\n✅ Successfully updated ${dependencies.length} dependencies!`
+        `\n✅ Successfully updated ${dependencies.length} ${dependencyWord}!`
       )
     );
   } catch (error) {

@@ -67,6 +67,7 @@ export async function checkDependencyVersions(
         isOutdated,
         updateType,
         isSkipped,
+        category,
       };
     });
 

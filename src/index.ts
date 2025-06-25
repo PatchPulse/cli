@@ -83,7 +83,10 @@ async function main(): Promise<void> {
 
           let depsToUpdate: Array<{
             packageName: string;
+            currentVersion: string;
             latestVersion: string;
+            updateType: 'patch' | 'minor' | 'major';
+            category: string;
           }> = [];
 
           if (updateType === 'patch') {
@@ -91,7 +94,10 @@ async function main(): Promise<void> {
               .filter(d => d.updateType === 'patch' && d.latestVersion)
               .map(d => ({
                 packageName: d.packageName,
+                currentVersion: d.currentVersion,
                 latestVersion: d.latestVersion!,
+                updateType: d.updateType!,
+                category: d.category || 'Dependencies',
               }));
           } else if (updateType === 'minor') {
             depsToUpdate = outdatedDeps
@@ -102,14 +108,20 @@ async function main(): Promise<void> {
               )
               .map(d => ({
                 packageName: d.packageName,
+                currentVersion: d.currentVersion,
                 latestVersion: d.latestVersion!,
+                updateType: d.updateType!,
+                category: d.category || 'Dependencies',
               }));
           } else if (updateType === 'all') {
             depsToUpdate = outdatedDeps
               .filter(d => d.latestVersion)
               .map(d => ({
                 packageName: d.packageName,
+                currentVersion: d.currentVersion,
                 latestVersion: d.latestVersion!,
+                updateType: d.updateType!,
+                category: d.category || 'Dependencies',
               }));
           }
 
