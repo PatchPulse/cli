@@ -27,6 +27,10 @@ npx patch-pulse
 
 **Checks:** `dependencies`, `devDependencies`, `peerDependencies`, `optionalDependencies`
 
+## Example
+
+![Example Screenshot](assets/example.png)
+
 ## Configuration
 
 Patch Pulse supports configuration files for persistent settings. Create one of these files in your project root:
@@ -74,10 +78,6 @@ CLI arguments override file configuration:
 # This will override any settings in patchpulse.config.json
 npx patch-pulse --skip "react,react-dom" --package-manager pnpm --no-update-prompt
 ```
-
-## Example
-
-![Example Screenshot](assets/example.png)
 
 ## Ecosystem
 
