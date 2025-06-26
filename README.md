@@ -18,17 +18,6 @@ npx patch-pulse
 
 That's it! Patch Pulse scans your `package.json` and shows which dependencies are outdated.
 
-## Usage
-
-```bash
-# Check all dependencies
-npx patch-pulse
-```
-
-**Checks:** `dependencies`, `devDependencies`, `peerDependencies`, `optionalDependencies`
-
-## Example
-
 ![Example Screenshot](assets/example.png)
 
 ## Configuration
