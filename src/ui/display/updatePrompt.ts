@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import { type PatchPulseConfig } from '../../services/config';
 import { type DependencyInfo } from '../../types';
 import { pluralize } from '../../utils/pluralize';
 import { displayHelp } from './help';
@@ -22,9 +23,12 @@ export interface UpdateOptions {
  * @param _wasPaused - The original paused state (unused but kept for consistency)
  */
 function setupRawMode(stdin: typeof process.stdin) {
-  stdin.setRawMode(true);
-  stdin.resume();
-  stdin.setEncoding('utf8');
+  // Check if stdin is a TTY before calling setRawMode
+  if (stdin.isTTY) {
+    stdin.setRawMode(true);
+    stdin.resume();
+    stdin.setEncoding('utf8');
+  }
 }
 
 /**
@@ -42,25 +46,49 @@ function restoreTerminalSettings({
   wasRaw: boolean;
   wasPaused: boolean;
 }) {
-  stdin.setRawMode(wasRaw);
-  if (wasPaused) {
-    stdin.pause();
+  // Only call setRawMode if stdin is a TTY
+  if (stdin.isTTY) {
+    stdin.setRawMode(wasRaw);
+    if (wasPaused) {
+      stdin.pause();
+    }
   }
 }
 
 /**
  * Displays the interactive update prompt after the summary
  * @param dependencies - Array of outdated dependencies
- * @param packageManager - The detected package manager
+ * @param config - The configuration object
  * @returns Promise that resolves with the selected update type or null if cancelled
  */
 export function displayUpdatePrompt(
-  dependencies: DependencyInfo[]
+  dependencies: DependencyInfo[],
+  config?: PatchPulseConfig
 ): Promise<'patch' | 'minor' | 'all' | null> {
   return new Promise(resolve => {
     const outdatedDeps = dependencies.filter(d => d.isOutdated && !d.isSkipped);
 
     if (outdatedDeps.length === 0) {
+      resolve(null);
+      return;
+    }
+
+    // Check if update prompt is disabled via config
+    if (config?.noUpdatePrompt) {
+      resolve(null);
+      return;
+    }
+
+    // Check if we're in a non-interactive environment (CI/CD)
+    if (!process.stdin.isTTY) {
+      console.log(
+        chalk.yellow(
+          '⚠️  Running in non-interactive environment. Skipping update prompt.'
+        )
+      );
+      console.log(
+        chalk.gray('Use --update-prompt flag to force interactive mode.')
+      );
       resolve(null);
       return;
     }

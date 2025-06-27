@@ -71,7 +71,7 @@ async function main(): Promise<void> {
           : detectPackageManager();
 
         // Show update prompt
-        const updateType = await displayUpdatePrompt(allDependencies);
+        const updateType = await displayUpdatePrompt(allDependencies, config);
 
         if (updateType) {
           const outdatedDeps = allDependencies.filter(

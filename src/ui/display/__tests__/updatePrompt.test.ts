@@ -12,6 +12,7 @@ const mockStdin = {
   isRaw: false,
   isPaused: vi.fn(() => false),
   pause: vi.fn(),
+  isTTY: true, // Mock TTY environment
 };
 
 // Stub the global process.stdin
@@ -22,6 +23,8 @@ vi.stubGlobal('process', {
 describe('updatePrompt', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Ensure TTY is true by default for tests
+    mockStdin.isTTY = true;
   });
 
   it('should return null when no outdated dependencies', async () => {
@@ -33,6 +36,41 @@ describe('updatePrompt', () => {
         isOutdated: false,
       },
     ];
+
+    const result = await displayUpdatePrompt(dependencies);
+    expect(result).toBeNull();
+  });
+
+  it('should return null when noUpdatePrompt config is true', async () => {
+    const dependencies: DependencyInfo[] = [
+      {
+        packageName: 'test-package',
+        currentVersion: '1.0.0',
+        latestVersion: '1.0.1',
+        isOutdated: true,
+        updateType: 'patch',
+      },
+    ];
+
+    const result = await displayUpdatePrompt(dependencies, {
+      noUpdatePrompt: true,
+    });
+    expect(result).toBeNull();
+  });
+
+  it('should return null when not in TTY environment', async () => {
+    const dependencies: DependencyInfo[] = [
+      {
+        packageName: 'test-package',
+        currentVersion: '1.0.0',
+        latestVersion: '1.0.1',
+        isOutdated: true,
+        updateType: 'patch',
+      },
+    ];
+
+    // Mock non-TTY environment
+    mockStdin.isTTY = false;
 
     const result = await displayUpdatePrompt(dependencies);
     expect(result).toBeNull();
