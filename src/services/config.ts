@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
-import { PACKAGE_MANAGERS } from '../constant';
+import { CONFIG_FILENAMES, PACKAGE_MANAGERS } from '../constant';
 import { type PackageManager } from '../types';
 
 export interface PatchPulseConfig {
@@ -8,12 +8,6 @@ export interface PatchPulseConfig {
   packageManager?: PackageManager;
   noUpdatePrompt?: boolean;
 }
-
-const CONFIG_FILENAMES = [
-  'patchpulse.config.json',
-  '.patchpulserc.json',
-  '.patchpulserc',
-];
 
 /**
  * Get the config from the config file and merged with the CLI config
