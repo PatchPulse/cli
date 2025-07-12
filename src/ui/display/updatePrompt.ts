@@ -1,9 +1,24 @@
 import chalk from 'chalk';
 import { type PatchPulseConfig } from '../../services/config';
 import { type DependencyInfo } from '../../types';
-import { pluralize } from '../../utils/pluralize';
 import { displayHelp } from './help';
 import { displayVersion } from './version';
+
+type UpdateType = 'patch' | 'minor' | 'all';
+
+type OtherOption = 'help' | 'version' | 'quit';
+
+const UPDATE_OPTION_CHARS: Record<UpdateType, string> = {
+  patch: 'p',
+  minor: 'm',
+  all: 'u',
+};
+
+const OTHER_OPTION_CHARS: Record<OtherOption, string> = {
+  help: 'h',
+  version: 'v',
+  quit: 'q',
+};
 
 interface UpdateOption {
   packageName: string;
@@ -64,7 +79,7 @@ function restoreTerminalSettings({
 export function displayUpdatePrompt(
   dependencies: DependencyInfo[],
   config?: PatchPulseConfig
-): Promise<'patch' | 'minor' | 'all' | null> {
+): Promise<UpdateType | null> {
   return new Promise(resolve => {
     const outdatedDeps = dependencies.filter(d => d.isOutdated && !d.isSkipped);
 
@@ -108,20 +123,12 @@ export function displayUpdatePrompt(
       // Show individual options
       if (updateOptions.patch.length > 0) {
         console.log(
-          `  ${chalk.cyan('p')} - Update ${pluralize({
-            count: updateOptions.patch.length,
-            singular: 'outdated patch dependency',
-            plural: 'outdated patch dependencies',
-          })}`
+          `  ${chalk.cyan(UPDATE_OPTION_CHARS.patch)} - Update outdated patch dependencies`
         );
       }
       if (updateOptions.minor.length > 0) {
         console.log(
-          `  ${chalk.cyan('m')} - Update ${pluralize({
-            count: updateOptions.minor.length,
-            singular: 'outdated minor dependency',
-            plural: 'outdated minor dependencies',
-          })}`
+          `  ${chalk.cyan(UPDATE_OPTION_CHARS.minor)} - Update outdated minor & patch dependencies`
         );
       }
 
@@ -130,25 +137,16 @@ export function displayUpdatePrompt(
         updateOptions.all.length > 0 &&
         (updateTypesCount > 1 || (!hasPatch && !hasMinor && hasMajor))
       ) {
-        const allText =
-          updateOptions.all.length === 1
-            ? `Update ${updateOptions.all.length} ${pluralize({
-                count: updateOptions.all.length,
-                singular: 'outdated dependency',
-                plural: 'outdated dependencies',
-              })}`
-            : `Update all ${updateOptions.all.length} ${pluralize({
-                count: updateOptions.all.length,
-                singular: 'outdated dependency',
-                plural: 'outdated dependencies',
-              })}`;
-
-        console.log(`  ${chalk.cyan('a')} - ${allText}`);
+        console.log(
+          `  ${chalk.cyan(UPDATE_OPTION_CHARS.all)} - update all outdated dependencies`
+        );
       }
 
       console.log();
       console.log(
-        `  ${chalk.gray('h')} - Show help | ${chalk.gray('v')} - Show version | ${chalk.gray('q')} - Quit`
+        `  ${chalk.gray(OTHER_OPTION_CHARS.help)} - Show help | ${chalk.gray(
+          OTHER_OPTION_CHARS.version
+        )} - Show version | ${chalk.gray(OTHER_OPTION_CHARS.quit)} - Quit`
       );
       console.log();
       console.log(chalk.white('Press a key to select an option...'));
@@ -170,7 +168,7 @@ export function displayUpdatePrompt(
       const choice = key.toLowerCase();
 
       switch (choice) {
-        case 'p':
+        case UPDATE_OPTION_CHARS.patch:
           if (updateOptions.patch.length > 0) {
             cleanup();
             resolve('patch');
@@ -178,7 +176,7 @@ export function displayUpdatePrompt(
             console.log(chalk.red('\nNo patch updates available'));
           }
           break;
-        case 'm':
+        case UPDATE_OPTION_CHARS.minor:
           if (updateOptions.minor.length > 0) {
             cleanup();
             resolve('minor');
@@ -186,7 +184,7 @@ export function displayUpdatePrompt(
             console.log(chalk.red('\nNo minor updates available'));
           }
           break;
-        case 'a':
+        case UPDATE_OPTION_CHARS.all:
           if (updateOptions.all.length > 0) {
             cleanup();
             resolve('all');
@@ -194,11 +192,11 @@ export function displayUpdatePrompt(
             console.log(chalk.red('\nNo updates available'));
           }
           break;
-        case 'q':
+        case OTHER_OPTION_CHARS.quit:
           cleanup();
           resolve(null);
           break;
-        case 'h':
+        case OTHER_OPTION_CHARS.help:
           cleanup();
           displayHelp();
           console.log();
@@ -208,7 +206,7 @@ export function displayUpdatePrompt(
           setupRawMode(stdin);
           stdin.on('data', handleKeyPress);
           break;
-        case 'v':
+        case OTHER_OPTION_CHARS.version:
           cleanup();
           displayVersion();
           console.log();
