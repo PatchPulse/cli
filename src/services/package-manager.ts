@@ -3,6 +3,7 @@ import { spawn } from 'child_process';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { type PackageManager, type UpdateableDependency } from '../types';
+import { preserveWildcardPrefix } from '../utils/parseVersion';
 import { pluralize } from '../utils/pluralize';
 
 export interface PackageManagerInfo {
@@ -198,21 +199,4 @@ export async function updateDependencies({
     console.error(chalk.red(`Failed to update dependencies: ${error}`));
     throw error;
   }
-}
-
-/**
- * Preserves the wildcard prefix from the current version when updating to the latest version
- * @param currentVersion - The current version string (e.g., "^3.3.1", "~2.1.0")
- * @param latestVersion - The latest version string (e.g., "3.3.2")
- * @returns The latest version with the original wildcard prefix preserved
- */
-export function preserveWildcardPrefix(
-  currentVersion: string,
-  latestVersion: string
-): string {
-  // Extract the wildcard prefix from the current version
-  const wildcardMatch = currentVersion.match(/^([\^~>=<]+)/);
-  const wildcardPrefix = wildcardMatch ? wildcardMatch[1] : '';
-  // Return the latest version with the original wildcard prefix
-  return wildcardPrefix + latestVersion;
 }
