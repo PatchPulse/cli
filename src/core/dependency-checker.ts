@@ -100,8 +100,18 @@ function displayResults(dependencyInfos: DependencyInfo[]): void {
       status = chalk.cyan('LATEST TAG');
       versionInfo = `${dep.currentVersion} → ${chalk.cyan(dep.latestVersion)} (actual latest version)`;
     } else if (!/^\d+\.\d+\.\d+/.test(dep.currentVersion)) {
-      status = chalk.blue('VERSION RANGE');
-      versionInfo = `${dep.currentVersion} → ${chalk.cyan(dep.latestVersion)} (latest available)`;
+      // Check if the version range matches the latest version
+      const isRangeUpToDate = !isVersionOutdated({
+        current: dep.currentVersion,
+        latest: dep.latestVersion,
+      });
+      if (isRangeUpToDate) {
+        status = chalk.green('UP TO DATE');
+        versionInfo = dep.currentVersion;
+      } else {
+        status = chalk.blue('VERSION RANGE');
+        versionInfo = `${dep.currentVersion} → ${chalk.cyan(dep.latestVersion)} (latest available)`;
+      }
     } else if (dep.isOutdated) {
       const updateTypeColor = {
         major: chalk.yellow,
