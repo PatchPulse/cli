@@ -96,9 +96,9 @@ function displayResults(dependencyInfos: DependencyInfo[]): void {
     } else if (!dep.latestVersion) {
       status = chalk.red('NOT FOUND');
       versionInfo = `${dep.currentVersion} (not found on npm registry)`;
-    } else if (dep.currentVersion === 'latest') {
+    } else if (['latest', '*'].includes(dep.currentVersion)) {
       status = chalk.cyan('LATEST TAG');
-      versionInfo = `latest → ${chalk.cyan(dep.latestVersion)} (actual latest version)`;
+      versionInfo = `${dep.currentVersion} → ${chalk.cyan(dep.latestVersion)} (actual latest version)`;
     } else if (!/^\d+\.\d+\.\d+/.test(dep.currentVersion)) {
       status = chalk.blue('VERSION RANGE');
       versionInfo = `${dep.currentVersion} → ${chalk.cyan(dep.latestVersion)} (latest available)`;
