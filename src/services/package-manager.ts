@@ -181,7 +181,9 @@ export async function updateDependencies({
 
     // Add all the package@version strings
     for (const dep of dependencies) {
-      args.push(`${dep.packageName}@${dep.latestVersion}`);
+      args.push(
+        `${dep.packageName}@${preserveWildcardPrefix(dep.currentVersion, dep.latestVersion)}`
+      );
     }
 
     // Run the command
@@ -196,4 +198,21 @@ export async function updateDependencies({
     console.error(chalk.red(`Failed to update dependencies: ${error}`));
     throw error;
   }
+}
+
+/**
+ * Preserves the wildcard prefix from the current version when updating to the latest version
+ * @param currentVersion - The current version string (e.g., "^3.3.1", "~2.1.0")
+ * @param latestVersion - The latest version string (e.g., "3.3.2")
+ * @returns The latest version with the original wildcard prefix preserved
+ */
+export function preserveWildcardPrefix(
+  currentVersion: string,
+  latestVersion: string
+): string {
+  // Extract the wildcard prefix from the current version
+  const wildcardMatch = currentVersion.match(/^([\^~>=<]+)/);
+  const wildcardPrefix = wildcardMatch ? wildcardMatch[1] : '';
+  // Return the latest version with the original wildcard prefix
+  return wildcardPrefix + latestVersion;
 }

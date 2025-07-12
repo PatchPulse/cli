@@ -111,16 +111,6 @@ export function displayUpdatePrompt(
     const updateOptions = categorizeUpdates(outdatedDeps);
 
     function showOptions() {
-      const hasPatch = updateOptions.patch.length > 0;
-      const hasMinor = updateOptions.minor.length > 0;
-      const hasMajor =
-        updateOptions.all.length >
-        updateOptions.patch.length + updateOptions.minor.length;
-      const updateTypesCount = [hasPatch, hasMinor, hasMajor].filter(
-        Boolean
-      ).length;
-
-      // Show individual options
       if (updateOptions.patch.length > 0) {
         console.log(
           `  ${chalk.cyan(UPDATE_OPTION_CHARS.patch)} - Update outdated patch dependencies`
@@ -131,14 +121,9 @@ export function displayUpdatePrompt(
           `  ${chalk.cyan(UPDATE_OPTION_CHARS.minor)} - Update outdated minor & patch dependencies`
         );
       }
-
-      // Show "all" option if there are multiple types OR if there are only major updates
-      if (
-        updateOptions.all.length > 0 &&
-        (updateTypesCount > 1 || (!hasPatch && !hasMinor && hasMajor))
-      ) {
+      if (updateOptions.all.length > 0) {
         console.log(
-          `  ${chalk.cyan(UPDATE_OPTION_CHARS.all)} - update all outdated dependencies`
+          `  ${chalk.cyan(UPDATE_OPTION_CHARS.all)} - Update all outdated dependencies`
         );
       }
 

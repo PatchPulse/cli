@@ -41,12 +41,8 @@ export async function checkDependencyVersions(
       if (!isSkipped) {
         latestVersion = await getLatestVersion(packageName);
 
-        // Don't try to compare versions if current version is not a standard semver
-        const isStandardSemver = /^\d+\.\d+\.\d+/.test(version);
-        if (!isStandardSemver) {
-          isOutdated = false;
-          updateType = undefined;
-        } else if (latestVersion) {
+        if (latestVersion) {
+          // Check if the version is outdated (works for both standard semver and version ranges)
           isOutdated = isVersionOutdated({
             current: version,
             latest: latestVersion,
@@ -100,17 +96,20 @@ function displayResults(dependencyInfos: DependencyInfo[]): void {
       status = chalk.cyan('LATEST TAG');
       versionInfo = `${dep.currentVersion} → ${chalk.cyan(dep.latestVersion)} (actual latest version)`;
     } else if (!/^\d+\.\d+\.\d+/.test(dep.currentVersion)) {
-      // Check if the version range matches the latest version
-      const isRangeUpToDate = !isVersionOutdated({
-        current: dep.currentVersion,
-        latest: dep.latestVersion,
-      });
-      if (isRangeUpToDate) {
+      // Handle version ranges
+      if (dep.isOutdated) {
+        const updateTypeColor = {
+          major: chalk.yellow,
+          minor: chalk.magenta,
+          patch: chalk.blue,
+        }[dep.updateType || 'patch'];
+        status = updateTypeColor(
+          `${dep.updateType?.toUpperCase() || 'UPDATE'}`
+        );
+        versionInfo = `${dep.currentVersion} → ${chalk.cyan(dep.latestVersion)}`;
+      } else {
         status = chalk.green('UP TO DATE');
         versionInfo = dep.currentVersion;
-      } else {
-        status = chalk.blue('VERSION RANGE');
-        versionInfo = `${dep.currentVersion} → ${chalk.cyan(dep.latestVersion)} (latest available)`;
       }
     } else if (dep.isOutdated) {
       const updateTypeColor = {
